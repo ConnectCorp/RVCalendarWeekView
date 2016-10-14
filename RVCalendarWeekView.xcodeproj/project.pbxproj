@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		276A4B1B1DB15C7B00F6308F /* MSEventCellNib.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B1A1DB15C7B00F6308F /* MSEventCellNib.m */; };
+		276A4B1E1DB15C8800F6308F /* MSEventCellStandard.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B1D1DB15C8800F6308F /* MSEventCellStandard.m */; };
+		276A4B211DB1624800F6308F /* MSEventStandard.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B201DB1624800F6308F /* MSEventStandard.m */; };
 		76276EB71D6B81D4002C1D39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EB61D6B81D4002C1D39 /* main.m */; };
 		76276EBA1D6B81D4002C1D39 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EB91D6B81D4002C1D39 /* AppDelegate.m */; };
 		76276EBD1D6B81D4002C1D39 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EBC1D6B81D4002C1D39 /* ViewController.m */; };
@@ -50,6 +53,12 @@
 /* Begin PBXFileReference section */
 		016043077DD4C904B6A3A6BE /* Pods-RVCalendarWeekView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RVCalendarWeekView.release.xcconfig"; path = "Pods/Target Support Files/Pods-RVCalendarWeekView/Pods-RVCalendarWeekView.release.xcconfig"; sourceTree = "<group>"; };
 		1A43A252421A63E1655B8A38 /* libPods-RVCalendarWeekView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RVCalendarWeekView.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		276A4B191DB15C7B00F6308F /* MSEventCellNib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEventCellNib.h; sourceTree = "<group>"; };
+		276A4B1A1DB15C7B00F6308F /* MSEventCellNib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEventCellNib.m; sourceTree = "<group>"; };
+		276A4B1C1DB15C8800F6308F /* MSEventCellStandard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEventCellStandard.h; sourceTree = "<group>"; };
+		276A4B1D1DB15C8800F6308F /* MSEventCellStandard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEventCellStandard.m; sourceTree = "<group>"; };
+		276A4B1F1DB1624800F6308F /* MSEventStandard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MSEventStandard.h; path = Lib/Views/MSEventStandard.h; sourceTree = "<group>"; };
+		276A4B201DB1624800F6308F /* MSEventStandard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MSEventStandard.m; path = Lib/Views/MSEventStandard.m; sourceTree = "<group>"; };
 		55A9198AF6C016D51B48E4CB /* Pods-RVCalendarWeekView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RVCalendarWeekView.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RVCalendarWeekView/Pods-RVCalendarWeekView.debug.xcconfig"; sourceTree = "<group>"; };
 		76276EB21D6B81D4002C1D39 /* RVCalendarWeekView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RVCalendarWeekView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76276EB61D6B81D4002C1D39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -226,6 +235,8 @@
 			children = (
 				76276F031D6B8759002C1D39 /* MSEvent.h */,
 				76276F041D6B8759002C1D39 /* MSEvent.m */,
+				276A4B1F1DB1624800F6308F /* MSEventStandard.h */,
+				276A4B201DB1624800F6308F /* MSEventStandard.m */,
 			);
 			name = Event;
 			sourceTree = "<group>";
@@ -250,6 +261,10 @@
 			children = (
 				76276EEC1D6B826B002C1D39 /* MSEventCell.h */,
 				76276EED1D6B826B002C1D39 /* MSEventCell.m */,
+				276A4B1C1DB15C8800F6308F /* MSEventCellStandard.h */,
+				276A4B1D1DB15C8800F6308F /* MSEventCellStandard.m */,
+				276A4B191DB15C7B00F6308F /* MSEventCellNib.h */,
+				276A4B1A1DB15C7B00F6308F /* MSEventCellNib.m */,
 				763A80281D6C4488002E0CBF /* MSDragableEvent.h */,
 				763A80291D6C4488002E0CBF /* MSDragableEvent.m */,
 			);
@@ -496,6 +511,7 @@
 				76276EF51D6B826B002C1D39 /* MSCollectionViewCalendarLayout.m in Sources */,
 				76FC4A001D7865BB004CF995 /* MSWeekViewDecoratorInfinite.m in Sources */,
 				768458251D7847080080A27A /* MSWeekViewDecorator.m in Sources */,
+				276A4B1B1DB15C7B00F6308F /* MSEventCellNib.m in Sources */,
 				76276F051D6B8759002C1D39 /* MSEvent.m in Sources */,
 				76276EFB1D6B826B002C1D39 /* MSEventCell.m in Sources */,
 				76276EBD1D6B81D4002C1D39 /* ViewController.m in Sources */,
@@ -506,6 +522,8 @@
 				76276EF81D6B826B002C1D39 /* MSDayColumnHeader.m in Sources */,
 				76276EBA1D6B81D4002C1D39 /* AppDelegate.m in Sources */,
 				76FC4A061D78678C004CF995 /* MSWeekViewDecoratorNewEvent.m in Sources */,
+				276A4B211DB1624800F6308F /* MSEventStandard.m in Sources */,
+				276A4B1E1DB15C8800F6308F /* MSEventCellStandard.m in Sources */,
 				76FC4A091D786E7F004CF995 /* MSWeekViewDecoratorFactory.m in Sources */,
 				76276EF61D6B826B002C1D39 /* MSCurrentTimeGridline.m in Sources */,
 				76276EFC1D6B826B002C1D39 /* MSGridline.m in Sources */,

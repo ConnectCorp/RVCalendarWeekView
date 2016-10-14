@@ -14,15 +14,5 @@
 @interface MSEventCell : UICollectionViewCell
 
 @property (nonatomic, strong) MSEvent *event;
-@property (nonatomic, strong) UILabel *title;
-@property (nonatomic, strong) UILabel *location;
-
-- (void)updateColors;
-
-- (NSDictionary *)titleAttributesHighlighted:(BOOL)highlighted;
-- (NSDictionary *)subtitleAttributesHighlighted:(BOOL)highlighted;
-- (UIColor *)backgroundColorHighlighted:(BOOL)selected;
-- (UIColor *)textColorHighlighted:(BOOL)selected;
-- (UIColor *)borderColor;
 
 @end

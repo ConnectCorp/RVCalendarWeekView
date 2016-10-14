@@ -19,6 +19,7 @@
 #import "MSTimeRowHeaderBackground.h"
 #import "MSDayColumnHeaderBackground.h"
 #import "MSEventCell.h"
+#import "MSEventCellStandard.h"
 #import "MSDayColumnHeader.h"
 #import "MSTimeRowHeader.h"
 #import "MSCurrentTimeIndicator.h"
@@ -82,7 +83,7 @@
     
     self.collectionView.backgroundColor = [UIColor whiteColor];
     
-    self.eventCellClass = MSEventCell.class;
+    self.eventCellClass = MSEventCellStandard.class;
     self.dayColumnHeaderClass = MSDayColumnHeader.class;
     self.timeRowHeaderClass = MSTimeRowHeader.class;
     

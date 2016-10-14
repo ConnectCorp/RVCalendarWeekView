@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "MSEvent.h"
+#import "MSEventStandard.h"
 #import "NSDate+Easy.h"
 #import "NSArray+Collection.h"
 
@@ -30,21 +31,21 @@
                                                   andDelegate:self];
     
     
-    MSEvent* event1 = [MSEvent make:NSDate.now
+    MSEvent* event1 = [MSEventStandard make:NSDate.now
                               title:@"Title"
                            subtitle:@"Central perk"];
     
-    MSEvent* event2 = [MSEvent make:[NSDate.now addMinutes:10]
+    MSEvent* event2 = [MSEventStandard make:[NSDate.now addMinutes:10]
                            duration:60*3
                               title:@"Title 2"
                            subtitle:@"Central perk"];
     
-    MSEvent* event3 = [MSEvent make:[NSDate.tomorrow addMinutes:10]
+    MSEvent* event3 = [MSEventStandard make:[NSDate.tomorrow addMinutes:10]
                            duration:60*3
                               title:@"Title 3"
                            subtitle:@"Central perk"];
     
-    MSEvent* event4 = [MSEvent make:[NSDate.nextWeek addHours:7]
+    MSEvent* event4 = [MSEventStandard make:[NSDate.nextWeek addHours:7]
                            duration:60*3
                               title:@"Title 4"
                            subtitle:@"Central perk"];
@@ -61,7 +62,9 @@
 #pragma mark - Week View delegate
 //=========================================
 -(void)weekView:(id)sender eventSelected:(MSEventCell*)eventCell{
-    NSLog(@"Event selected: %@",eventCell.event.title);
+    if ([eventCell.event isKindOfClass:MSEventStandard.class]) {
+        NSLog(@"Event selected: %@",((MSEventStandard *)eventCell.event).title);
+    }
     //[_weekView removeEvent:event];
 }
 
@@ -104,7 +107,7 @@
 //=========================================
 -(void)weekView:(MSWeekView*)weekView onLongPressAt:(NSDate*)date{
     NSLog(@"Long pressed at: %@", date);
-    MSEvent *newEvent = [MSEvent make:date title:@"New Event" subtitle:@"Platinium stadium"];
+    MSEvent *newEvent = [MSEventStandard make:date title:@"New Event" subtitle:@"Platinium stadium"];
     [_weekView addEvent:newEvent];
 }
 
@@ -119,12 +122,12 @@
 -(BOOL)weekView:(MSWeekView*)weekView newDaysLoaded:(NSDate*)startDate to:(NSDate*)endDate{
     NSLog(@"New days loaded: %@ - %@", startDate, endDate);
     
-    MSEvent* newEvent = [MSEvent make:[startDate addHours:7]
+    MSEvent* newEvent = [MSEventStandard make:[startDate addHours:7]
                            duration:60*3
                               title:@"New event"
                            subtitle:@"Batcave"];
     
-    MSEvent* lastEvent = [MSEvent make:[endDate addHours:-7]
+    MSEvent* lastEvent = [MSEventStandard make:[endDate addHours:-7]
                              duration:60*3
                                 title:@"Last event"
                              subtitle:@"Fantastic tower"];
