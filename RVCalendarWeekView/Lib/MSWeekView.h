@@ -32,11 +32,13 @@
 @property(weak,nonatomic) id<MSWeekViewDelegate> delegate;
 
 /**
- * Changes these in subclass's registerClasses before calling [super registerClasses];
+ * Change these in subclass's `registerClasses` before calling `[super registerClasses];`
  */
 @property(nonatomic) Class eventCellClass;
 @property(nonatomic) Class dayColumnHeaderClass;
 @property(nonatomic) Class timeRowHeaderClass;
+
+-(void)registerEventCellClass:(Class)cls forReuseIdentifierPostfix:(NSString *)postfix;
 
 /**
  * These are optional. If you don't want any of the decoration views, just set them to nil.

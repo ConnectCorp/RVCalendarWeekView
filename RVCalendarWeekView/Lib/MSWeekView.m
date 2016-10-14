@@ -28,6 +28,13 @@
 #define MSDayColumnHeaderReuseIdentifier  @"MSDayColumnHeaderReuseIdentifier"
 #define MSTimeRowHeaderReuseIdentifier    @"MSTimeRowHeaderReuseIdentifier"
 
+@interface MSWeekView ()
+
+- (NSString *)reuseIdentifierForEvent:(MSEvent *)event;
+- (NSString *)reuseIdentifierForPostfix:(NSString *)postfix;
+
+@end
+
 @implementation MSWeekView
 
 //================================================
@@ -89,8 +96,20 @@
     [self registerClasses];
 }
 
+-(void)registerEventCellClass:(Class)cls forReuseIdentifierPostfix:(NSString *)postfix{
+    [self.collectionView registerClass:cls forCellWithReuseIdentifier:[self reuseIdentifierForPostfix:postfix]];
+}
+
+-(NSString *)reuseIdentifierForEvent:(MSEvent *)event{
+    return [self reuseIdentifierForPostfix:event.reuseIdentifierPostfix];
+}
+
+-(NSString *)reuseIdentifierForPostfix:(NSString *)postfix{
+    return [NSString stringWithFormat:@"%@-%@", MSEventCellReuseIdentifier, postfix];
+}
+
 -(void)registerClasses{
-    [self.collectionView registerClass:self.eventCellClass forCellWithReuseIdentifier:MSEventCellReuseIdentifier];
+    [self.collectionView registerClass:self.eventCellClass forCellWithReuseIdentifier:[self reuseIdentifierForPostfix:MSEventDefaultReuseIdentifierPostfix]];
     [self.collectionView registerClass:self.dayColumnHeaderClass forSupplementaryViewOfKind:MSCollectionElementKindDayColumnHeader withReuseIdentifier:MSDayColumnHeaderReuseIdentifier];
     [self.collectionView registerClass:self.timeRowHeaderClass forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeader withReuseIdentifier:MSTimeRowHeaderReuseIdentifier];
     
@@ -195,9 +214,11 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MSEventCell *cell   = [collectionView dequeueReusableCellWithReuseIdentifier:MSEventCellReuseIdentifier forIndexPath:indexPath];
-    NSString* day      = [mDays.allKeys.sort objectAtIndex:indexPath.section];
-    cell.event         = [mDays[day] objectAtIndex:indexPath.row];
+    NSString* day       = [mDays.allKeys.sort objectAtIndex:indexPath.section];
+    MSEvent*  event     = [mDays[day] objectAtIndex:indexPath.row];
+    
+    MSEventCell *cell   = [collectionView dequeueReusableCellWithReuseIdentifier:[self reuseIdentifierForEvent:event] forIndexPath:indexPath];
+    cell.event          = event;
     
     return cell;
 }

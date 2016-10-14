@@ -21,6 +21,7 @@
     event.EndDate   = end;
     event.title     = title;
     event.location  = subtitle;
+    event.reuseIdentifierPostfix = MSEventDefaultReuseIdentifierPostfix;
     return event;
 }
 
@@ -30,6 +31,7 @@
     event.EndDate   = [start addMinutes:minutes];
     event.title     = title;
     event.location  = subtitle;
+    event.reuseIdentifierPostfix = MSEventDefaultReuseIdentifierPostfix;
     return event;
 }
 
