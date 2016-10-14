@@ -19,15 +19,22 @@
                                   eventCell.frame.origin.y - offset.y,
                                   eventCell.frame.size.width, eventCell.frame.size.height);
     
-    MSDragableEvent *dragCell = [[MSDragableEvent alloc] initWithFrame:newFrame];
+    MSDragableEvent *dragCell = [[MSDragableEvent alloc] initWithFrame:newFrame eventCell:eventCell];
     dragCell.touchOffset      = touchOffset;
     dragCell.event          = eventCell.event;
-    dragCell.backgroundColor  = [eventCell backgroundColorHighlighted:YES];
     return dragCell;
 }
 
--(id)initWithFrame:(CGRect)frame{
+-(id)initWithFrame:(CGRect)frame eventCell:(MSEventCell *)eventCell{
     if(self = [super initWithFrame:frame]){
+        
+        UIView *view = [eventCell snapshotViewAfterScreenUpdates:YES];
+        [self addSubview:view];
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        [view.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+        [view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+        [view.leftAnchor constraintEqualToAnchor:self.leftAnchor].active = YES;
+        [view.rightAnchor constraintEqualToAnchor:self.rightAnchor].active = YES;
         
         CGFloat borderWidth = 2.0;
         UIEdgeInsets contentPadding = UIEdgeInsetsMake(1.0, (borderWidth + 4.0), 1.0, 4.0);

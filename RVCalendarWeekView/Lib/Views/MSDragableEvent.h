@@ -8,10 +8,7 @@
 
 #import "MSEventCell.h"
 
-@interface MSDragableEvent : MSEventCell{
-    CGPoint _originalPosition;
-    CGPoint _touchOffset;
-}
+@interface MSDragableEvent : MSEventCell
 
 +(MSDragableEvent*)makeWithEventCell:(MSEventCell*)eventCell andOffset:(CGPoint)offset touchOffset:(CGPoint)touchOffset;
 
