@@ -15,6 +15,13 @@
 
 @property (nonatomic, strong) NSString *reuseIdentifierPostfix;
 
++(instancetype)make:(NSDate*)start;
++(instancetype)make:(NSDate*)start end:(NSDate*)end;
+
++(instancetype)make:(NSDate*)start duration:(int)minutes;
+
+-(instancetype)initWithStart:(NSDate*)start end:(NSDate*)end;
+
 - (NSDate *)day;
 
 @end

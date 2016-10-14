@@ -18,4 +18,6 @@
 
 +(instancetype)make:(NSDate*)start duration:(int)minutes title:(NSString*)title subtitle:(NSString*)subtitle;
 
+-(instancetype)initWithStart:(NSDate*)start end:(NSDate*)end title:(NSString*)title subtitle:(NSString*)subtitle;
+
 @end
