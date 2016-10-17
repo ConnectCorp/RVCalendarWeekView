@@ -68,8 +68,8 @@
     self.collectionView.showsVerticalScrollIndicator    = NO;
     self.collectionView.showsHorizontalScrollIndicator  = NO;
     /*if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad) {
-        self.collectionView.pagingEnabled = YES;
-    }*/
+     self.collectionView.pagingEnabled = YES;
+     }*/
     
     [self addSubview:self.collectionView];
     [self.collectionView makeConstraints:^(MASConstraintMaker *make) {
@@ -185,38 +185,44 @@
 -(void)groupEventsByDays{
     
     //TODO : Improve this to make it faster
-    mDays = [mEvents groupBy:@"StartDate.toDeviceTimezoneDateString"].mutableCopy;
+    mEventsGroupedByDay = [mEvents groupBy:@"StartDate.toDeviceTimezoneDateString"].mutableCopy;
+    mDays = [[NSMutableDictionary alloc] init];
     
-    NSDate* date = [NSDate today:@"device"];
-    if(self.daysToShow == 1 && mDays.count == 1){
-        date = [NSDate parse:mDays.allKeys.firstObject];
+    NSDate *date;
+    if (self.firstDateToShow) {
+        date = self.firstDateToShow.copy;
+    } else {
+        date = [NSDate today:@"device"];
+        if(self.daysToShow == 1 && mEventsGroupedByDay.count == 1){
+            date = [NSDate parse:mEventsGroupedByDay.allKeys.firstObject];
+        }
     }
     for(int i = 0; i< self.daysToShow; i++){
         if(![mDays.allKeys containsObject:date.toDeviceTimezoneDateString]){
             [mDays setObject:@[] forKey:date.toDeviceTimezoneDateString];
         }
         date = [date addDay];
-    }    
+    }
 }
 
 //================================================
 #pragma mark - CollectionView Datasource
 //================================================
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
-{   
+{
     return mDays.count;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     NSString* day = [mDays.allKeys.sort objectAtIndex:section];
-    return [mDays[day] count];
+    return [mEventsGroupedByDay[day] count];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString* day       = [mDays.allKeys.sort objectAtIndex:indexPath.section];
-    MSEvent*  event     = [mDays[day] objectAtIndex:indexPath.row];
+    MSEvent*  event     = [mEventsGroupedByDay[day] objectAtIndex:indexPath.row];
     
     MSEventCell *cell   = [collectionView dequeueReusableCellWithReuseIdentifier:[self reuseIdentifierForEvent:event] forIndexPath:indexPath];
     cell.event          = event;
@@ -260,14 +266,14 @@
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout startTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString* day   = [mDays.allKeys.sort objectAtIndex:indexPath.section];
-    MSEvent* ev     = [mDays[day] objectAtIndex:indexPath.row];
+    MSEvent* ev     = [mEventsGroupedByDay[day] objectAtIndex:indexPath.row];
     return ev.StartDate;
 }
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString* day   = [mDays.allKeys.sort objectAtIndex:indexPath.section];
-    MSEvent* ev     = [mDays[day] objectAtIndex:indexPath.row];
+    MSEvent* ev     = [mEventsGroupedByDay[day] objectAtIndex:indexPath.row];
     return ev.EndDate;
 }
 

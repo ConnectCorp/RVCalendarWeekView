@@ -20,6 +20,7 @@
 {
     NSArray             * mEvents;
     NSMutableDictionary * mDays;
+    NSMutableDictionary * mEventsGroupedByDay;
 }
 
 @property(strong,nonatomic) UICollectionView* collectionView;
@@ -28,6 +29,7 @@
 @property(nonatomic) int daysToShowOnScreen;
 @property(nonatomic) int daysToShow;
 @property(strong,nonatomic) NSArray* events;
+@property(strong) NSDate *firstDateToShow;
 
 @property(weak,nonatomic) id<MSWeekViewDelegate> delegate;
 
