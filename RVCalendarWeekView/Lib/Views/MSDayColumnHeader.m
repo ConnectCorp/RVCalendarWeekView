@@ -52,8 +52,7 @@
     static NSDateFormatter *dateFormatter;
     if (!dateFormatter) {
         dateFormatter = [NSDateFormatter new];
-        //dateFormatter.dateFormat = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? @"EEE MMM d" : @"EEEE MMMM d, YYYY");
-        dateFormatter.dateFormat = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? @"EEE d" : @"EEE MMMM d, YYYY");
+        dateFormatter.dateFormat = [self dateFormat];
     }
     self.title.text = [dateFormatter stringFromDate:day];
     [self setNeedsLayout];
@@ -63,15 +62,29 @@
 {
     _currentDay = currentDay;
     
-    if (currentDay) {
-        self.title.textColor                    = [UIColor whiteColor];
-        self.title.font                         = [UIFont boldSystemFontOfSize:16.0];
-        self.titleBackground.backgroundColor    = [UIColor colorWithHexString:@"fd3935"];
-    } else {
-        self.title.font                         = [UIFont systemFontOfSize:16.0];
-        self.title.textColor                    = [UIColor blackColor];
-        self.titleBackground.backgroundColor    = [UIColor clearColor];
-    }
+    self.title.font                         = [self fontForCurrentDay:currentDay];
+    self.title.textColor                    = [self titleColorForCurrentDay:currentDay];
+    self.titleBackground.backgroundColor    = [self titleBackgroundColorForCurrentDay:currentDay];
+}
+
+- (NSString *)dateFormat
+{
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? @"EEE d" : @"EEE MMMM d, YYYY";
+}
+
+- (UIFont *)fontForCurrentDay:(BOOL)isCurrentDay
+{
+    return isCurrentDay ? [UIFont boldSystemFontOfSize:16.0] : [UIFont systemFontOfSize:16.0];
+}
+
+- (UIColor *)titleColorForCurrentDay:(BOOL)isCurrentDay
+{
+    return isCurrentDay ? [UIColor whiteColor] : [UIColor blackColor];
+}
+
+- (UIColor *)titleBackgroundColorForCurrentDay:(BOOL)isCurrentDay
+{
+    return isCurrentDay ? [UIColor colorWithHexString:@"fd3935"] : [UIColor clearColor];
 }
 
 @end
