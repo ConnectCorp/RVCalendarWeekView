@@ -204,7 +204,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     [super prepareLayout];
     
     if (self.needsToPopulateAttributesForAllSections) {
-        [self prepareSectionLayoutForSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.collectionView.numberOfSections)]];
+        [self prepareSectionLayoutForSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfSectionsInCollectionView])]];
         self.needsToPopulateAttributesForAllSections = NO;
     }
     
@@ -236,7 +236,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 
 - (void)prepareHorizontalTileSectionLayoutForSections:(NSIndexSet *)sectionIndexes
 {
-    if (self.collectionView.numberOfSections == 0) {
+    if ([self numberOfSectionsInCollectionView] == 0) {
         return;
     }
     
@@ -302,7 +302,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         currentTimeHorizontalGridlineAttributes.frame = CGRectMake(currentTimeHorizontalGridlineMinX, currentTimeHorizontalGridlineMinY, currentTimehorizontalGridlineWidth, self.currentTimeHorizontalGridlineHeight);
         currentTimeHorizontalGridlineAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindCurrentTimeHorizontalGridline];
     }
-
+    
     // Day Column Header
     CGFloat dayColumnHeaderMinY = fmaxf(self.collectionView.contentOffset.y, 0.0);
     BOOL dayColumnHeaderFloating = ((dayColumnHeaderMinY != 0) || self.displayHeaderBackgroundAtOrigin);
@@ -408,7 +408,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 
 - (void)prepareVerticalTileSectionLayoutForSections:(NSIndexSet *)sectionIndexes
 {
-    if (self.collectionView.numberOfSections == 0) {
+    if ([self numberOfSectionsInCollectionView] == 0) {
         return;
     }
     
@@ -419,7 +419,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     // Current Time Horizontal Gridline
     NSIndexPath *currentTimeHorizontalGridlineIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     UICollectionViewLayoutAttributes *currentTimeHorizontalGridlineAttributes = [self layoutAttributesForDecorationViewAtIndexPath:currentTimeHorizontalGridlineIndexPath ofKind:MSCollectionElementKindCurrentTimeHorizontalGridline withItemCache:self.currentTimeHorizontalGridlineAttributes];
-
+    
     // Start these off hidden, and unhide them in the case of the current time indicator being within a specified section
     currentTimeIndicatorAttributes.frame = CGRectZero;
     currentTimeHorizontalGridlineAttributes.frame = CGRectZero;
@@ -436,7 +436,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         NSInteger latestHour = [self latestHourForSection:section];
         
         CGFloat columnMinY = (section == 0) ? 0.0 : [self stackedSectionHeightUpToSection:section];
-        CGFloat nextColumnMinY = (section == (NSUInteger)self.collectionView.numberOfSections) ? self.collectionViewContentSize.height : [self stackedSectionHeightUpToSection:(section + 1)];
+        CGFloat nextColumnMinY = (section == (NSUInteger)[self numberOfSectionsInCollectionView]) ? self.collectionViewContentSize.height : [self stackedSectionHeightUpToSection:(section + 1)];
         CGFloat calendarGridMinY = (columnMinY + self.dayColumnHeaderHeight + self.contentMargin.top);
         
         // Day Column Header
@@ -466,7 +466,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             
             // The y value of the current time
             CGFloat timeY = (calendarGridMinY + nearbyintf(((currentTimeDateComponents.hour - earliestHour) * self.hourHeight) + (currentTimeDateComponents.minute * self.minuteHeight)));
-
+            
             CGFloat currentTimeIndicatorMinY = (timeY - nearbyintf(self.currentTimeIndicatorSize.height / 2.0));
             CGFloat currentTimeIndicatorMinX = (self.timeRowHeaderWidth - self.currentTimeIndicatorSize.width);
             currentTimeIndicatorAttributes.frame = (CGRect){{currentTimeIndicatorMinX, currentTimeIndicatorMinY}, self.currentTimeIndicatorSize};
@@ -606,11 +606,11 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
                 
                 // It it hasn't yet been adjusted, perform adjustment
                 if (![adjustedAttributes containsObject:divisionAttributes]) {
-                
+                    
                     CGRect divisionAttributesFrame = divisionAttributes.frame;
                     divisionAttributesFrame.origin.x = (sectionMinX + self.cellMargin.left);
                     divisionAttributesFrame.size.width = itemWidth;
-                
+                    
                     // Horizontal Layout
                     NSInteger adjustments = 1;
                     for (UICollectionViewLayoutAttributes *dividedItemAttributes in dividedAttributes) {
@@ -619,7 +619,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
                             adjustments++;
                         }
                     }
-
+                    
                     // Stacking (lower items stack above higher items, since the title is at the top)
                     divisionAttributes.zIndex = sectionZ;
                     sectionZ ++;
@@ -640,7 +640,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     switch (self.sectionLayoutType) {
         case MSSectionLayoutTypeHorizontalTile:
             height = [self maxSectionHeight];
-            width = (self.timeRowHeaderWidth + self.contentMargin.left + ((self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right) * self.collectionView.numberOfSections) + self.contentMargin.right);
+            width = (self.timeRowHeaderWidth + self.contentMargin.left + ((self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right) * [self numberOfSectionsInCollectionView]) + self.contentMargin.right);
             break;
         case MSSectionLayoutTypeVerticalTile:
             height = [self stackedSectionHeight];
@@ -690,9 +690,9 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
-{   
+{
     NSMutableIndexSet *visibleSections = [NSMutableIndexSet indexSet];
-    [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.collectionView.numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
+    [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfSectionsInCollectionView])] enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
         CGRect sectionRect = [self rectForSection:section];
         if (CGRectIntersectsRect(sectionRect, rect)) {
             [visibleSections addIndex:section];
@@ -872,7 +872,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 #pragma mark Scrolling
 - (void)scrollCollectionViewToClosetSectionToCurrentTimeAnimated:(BOOL)animated
 {
-    if (self.collectionView.numberOfSections != 0) {
+    if ([self numberOfSectionsInCollectionView] != 0) {
         NSInteger closestSectionToCurrentTime = [self closestSectionToCurrentTime];
         [self scrollCollectionViewToSection:closestSectionToCurrentTime hourIndex:-1 animated:animated];
     }
@@ -880,7 +880,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 
 - (void)scrollCollectionViewToClosetSectionToTime:(NSDate *)time animated:(BOOL)animated
 {
-    if (self.collectionView.numberOfSections != 0) {
+    if ([self numberOfSectionsInCollectionView] != 0) {
         NSInteger closestSectionToTime = [self closestSectionToTime:time];
         NSInteger hourIndex = [self hourIndexForDate:time];
         [self scrollCollectionViewToSection:closestSectionToTime hourIndex:hourIndex animated:animated];
@@ -889,7 +889,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 
 - (void)scrollCollectionViewToSection:(NSInteger)section hourIndex:(NSInteger)hourIndex animated:(BOOL)animated
 {
-    if (self.collectionView.numberOfSections != 0) {
+    if ([self numberOfSectionsInCollectionView] != 0) {
         CGPoint contentOffset;
         UICollectionViewLayoutAttributes *horizontalGridlineattributes;
         if (hourIndex >= 0) {
@@ -947,7 +947,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
     NSTimeInterval minTimeInterval = CGFLOAT_MAX;
     NSInteger closestSection = NSIntegerMax;
-    for (NSInteger section = 0; section < self.collectionView.numberOfSections; section++) {
+    for (NSInteger section = 0; section < [self numberOfSectionsInCollectionView]; section++) {
         NSDate *sectionDayDate = [self.delegate collectionView:self.collectionView layout:self dayForSection:section];
         NSTimeInterval timeInterval = [startOfCurrentDay timeIntervalSinceDate:sectionDayDate];
         if ((timeInterval <= 0) && ABS(timeInterval) < minTimeInterval) {
@@ -973,7 +973,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         }
         case MSSectionLayoutTypeVerticalTile: {
             CGFloat columnMinY = (section == 0) ? 0.0 : [self stackedSectionHeightUpToSection:section];
-            CGFloat nextColumnMinY = (section == self.collectionView.numberOfSections) ? self.collectionViewContentSize.height : [self stackedSectionHeightUpToSection:(section + 1)];
+            CGFloat nextColumnMinY = (section == [self numberOfSectionsInCollectionView]) ? self.collectionViewContentSize.height : [self stackedSectionHeightUpToSection:(section + 1)];
             sectionRect = CGRectMake(0.0, columnMinY, self.collectionViewContentSize.width, (nextColumnMinY - columnMinY));
             break;
         }
@@ -987,7 +987,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         return self.cachedMaxColumnHeight;
     }
     CGFloat maxSectionHeight = 0.0;
-    for (NSInteger section = 0; section < self.collectionView.numberOfSections; section++) {
+    for (NSInteger section = 0; section < [self numberOfSectionsInCollectionView]; section++) {
         
         NSInteger earliestHour = [self earliestHour];
         NSInteger latestHour = [self latestHourForSection:section];
@@ -1013,7 +1013,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 
 - (CGFloat)stackedSectionHeight
 {
-    return [self stackedSectionHeightUpToSection:self.collectionView.numberOfSections];
+    return [self stackedSectionHeightUpToSection:[self numberOfSectionsInCollectionView]];
 }
 
 - (CGFloat)stackedSectionHeightUpToSection:(NSInteger)upToSection
@@ -1148,7 +1148,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         return self.cachedEarliestHour;
     }
     NSInteger earliestHour = NSIntegerMax;
-    for (NSInteger section = 0; section < self.collectionView.numberOfSections; section++) {
+    for (NSInteger section = 0; section < [self numberOfSectionsInCollectionView]; section++) {
         CGFloat sectionEarliestHour = [self earliestHourForSection:section];
         if ((sectionEarliestHour < earliestHour) && (sectionEarliestHour != NSDateComponentUndefined)) {
             earliestHour = sectionEarliestHour;
@@ -1169,7 +1169,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         return self.cachedLatestHour;
     }
     NSInteger latestHour = NSIntegerMin;
-    for (NSInteger section = 0; section < self.collectionView.numberOfSections; section++) {
+    for (NSInteger section = 0; section < [self numberOfSectionsInCollectionView]; section++) {
         CGFloat sectionLatestHour = [self latestHourForSection:section];
         if ((sectionLatestHour > latestHour) && (sectionLatestHour != NSDateComponentUndefined)) {
             latestHour = sectionLatestHour;
@@ -1239,10 +1239,10 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     if ([self.cachedDayDateComponents objectForKey:@(section)]) {
         return [self.cachedDayDateComponents objectForKey:@(section)];
     }
-
+    
     NSDate *day = [self.delegate collectionView:self.collectionView layout:self dayForSection:section];
     NSDate *startOfDay = [NSCalendar.currentCalendar startOfDayForDate:day];
-
+    
     NSDateComponents *dayDateComponents = [NSCalendar.currentCalendar components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitEra) fromDate:startOfDay];
     
     [self.cachedDayDateComponents setObject:dayDateComponents forKey:@(section)];
@@ -1286,6 +1286,14 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
     [self.cachedCurrentDateComponents setObject:currentTime forKey:@(0)];
     return currentTime;
+}
+
+- (NSInteger)numberOfSectionsInCollectionView {
+    if ([self.collectionView.dataSource respondsToSelector:@selector(numberOfSectionsInCollectionView:)]) {
+        return [self.collectionView.dataSource numberOfSectionsInCollectionView:self.collectionView];
+    } else {
+        return self.collectionView.numberOfSections;
+    }
 }
 //Original file: 1242
 @end

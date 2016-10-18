@@ -19,10 +19,10 @@
 @interface MSWeekView : UIView <UICollectionViewDataSource, UICollectionViewDelegate,MSCollectionViewDelegateCalendarLayout>
 {
     NSArray             * mEvents;
-    NSMutableDictionary * mDays;
     NSMutableDictionary * mEventsGroupedByDay;
 }
 
+@property(strong, nonatomic) NSMutableDictionary* days;
 @property(strong,nonatomic) UICollectionView* collectionView;
 @property(strong,nonatomic) MSCollectionViewCalendarLayout* weekFlowLayout;
 
