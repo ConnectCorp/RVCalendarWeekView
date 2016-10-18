@@ -13,4 +13,9 @@
 @property (nonatomic, strong) NSDate *day;
 @property (nonatomic, assign) BOOL currentDay;
 
+- (NSString *)dateFormat;
+- (UIFont *)fontForCurrentDay:(BOOL)isCurrentDay;
+- (UIColor *)titleColorForCurrentDay:(BOOL)isCurrentDay;
+- (UIColor *)titleBackgroundColorForCurrentDay:(BOOL)isCurrentDay;
+
 @end
