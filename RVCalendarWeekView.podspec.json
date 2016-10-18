@@ -1,14 +1,14 @@
 {
     "name": "RVCalendarWeekView",
-    "version": "0.2.1",
+    "version": "0.6.0",
     "summary": "Utils used along all revo products",
     "license": "MIT",
     "platforms": {
         "ios": "6.0"
     },
     "source": {
-        "git": "https://github.com/BadChoice/RVCalendarWeekView.git",
-        "tag": "0.2.1"
+        "git": "https://github.com/ConnectCorp/RVCalendarWeekView",
+        "tag": "0.6.0"
     },
     "dependencies":{
         "Collection": [
