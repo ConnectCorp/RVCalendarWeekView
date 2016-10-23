@@ -10,10 +10,11 @@
 #import "MSCollectionViewCalendarLayout.h"
 #import "MSDragableEvent.h"
 #import "MSEvent.h"
-
+#import "MSDayColumnHeader.h"
 
 @protocol MSWeekViewDelegate <NSObject>
 -(void)weekView:(id)sender eventSelected:(MSEventCell*)eventCell;
+-(void)weekView:(id)sender dayColumnHeaderTapped:(MSDayColumnHeader*)dayColumnHeader;
 @end
 
 @interface MSWeekView : UIView <UICollectionViewDataSource, UICollectionViewDelegate,MSCollectionViewDelegateCalendarLayout>
