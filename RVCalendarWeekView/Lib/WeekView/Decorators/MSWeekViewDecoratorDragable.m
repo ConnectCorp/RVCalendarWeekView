@@ -28,10 +28,10 @@
 //=========================================================
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MSEventCell *cell         = (MSEventCell*)[super collectionView:collectionView cellForItemAtIndexPath:indexPath];
-    UIGestureRecognizer* lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onEventCellLongPress:)];
-    lpgr.delegate = self;
-    [cell addGestureRecognizer:lpgr];
+    MSEventCell *cell = (MSEventCell*)[super collectionView:collectionView cellForItemAtIndexPath:indexPath];
+    UIPanGestureRecognizer* gr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onEventCellPan:)];
+    gr.delegate = self;
+    [cell addGestureRecognizer:gr];
     
     return cell;
 }
@@ -47,11 +47,11 @@
 //=========================================================
 #pragma mark - Drag & Drop
 //=========================================================
--(void)onEventCellLongPress:(UILongPressGestureRecognizer*)gestureRecognizer{
+-(void)onEventCellPan:(UIPanGestureRecognizer*)gestureRecognizer{
     MSEventCell* eventCell = (MSEventCell*)gestureRecognizer.view;
     
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        //NSLog(@"Long press began: %@",eventCell.akEvent.title);
+        //NSLog(@"Pan began: %@",eventCell.akEvent.title);
         CGPoint touchOffsetInCell = [gestureRecognizer locationInView:gestureRecognizer.view];
         mDragableEvent = [MSDragableEvent makeWithEventCell:eventCell andOffset:self.weekView.collectionView.contentOffset touchOffset:touchOffsetInCell];
         [self.baseWeekView addSubview:mDragableEvent];
@@ -84,7 +84,7 @@
         
     }
     else if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
-        //NSLog(@"Long press ended: %@",eventCell.akEvent.title);
+        //NSLog(@"Pan ended: %@",eventCell.akEvent.title);
         [self onDragEnded:eventCell];
     }
 }
