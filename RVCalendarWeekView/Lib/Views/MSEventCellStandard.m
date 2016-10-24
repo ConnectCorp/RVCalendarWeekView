@@ -37,6 +37,9 @@
         self.borderView = [UIView new];
         [self.contentView addSubview:self.borderView];
         
+        self.bottomDragHandle = [UIView new];
+        [self.contentView addSubview:self.bottomDragHandle];
+        
         self.title = [UILabel new];
         self.title.numberOfLines = 0;
         self.title.backgroundColor = [UIColor clearColor];
@@ -58,6 +61,14 @@
             make.width.equalTo(@(borderWidth));
             make.left.equalTo(self.left);
             make.top.equalTo(self.top);
+        }];
+        
+        CGFloat dragHandleHeight = 4.0;
+        [self.bottomDragHandle makeConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(dragHandleHeight));
+            make.width.equalTo(self.width);
+            make.left.equalTo(self.left);
+            make.bottom.equalTo(self.bottom);
         }];
         
         [self.title makeConstraints:^(MASConstraintMaker *make) {
@@ -115,6 +126,7 @@
 {
     self.contentView.backgroundColor = [self backgroundColorHighlighted:self.selected];
     self.borderView.backgroundColor  = [self borderColor];
+    self.bottomDragHandle.backgroundColor  = [self bottomDragHandleColor];
     self.title.textColor             = [self textColorHighlighted:self.selected];
     self.location.textColor          = [self textColorHighlighted:self.selected];
 }
@@ -158,6 +170,10 @@
 - (UIColor *)borderColor
 {
     return [[self backgroundColorHighlighted:NO] colorWithAlphaComponent:1.0];
+}
+
+- (UIColor *)bottomDragHandleColor {
+    return [UIColor blackColor];
 }
 
 @end

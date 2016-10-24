@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) UILabel *title;
 @property (nonatomic, strong) UILabel *location;
+@property (nonatomic, strong) UIView *bottomDragHandle;
 
 - (void)updateColors;
 
