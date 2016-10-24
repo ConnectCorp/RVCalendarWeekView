@@ -20,7 +20,6 @@
 #import "MSDayColumnHeaderBackground.h"
 #import "MSEventCell.h"
 #import "MSEventCellStandard.h"
-#import "MSDayColumnHeader.h"
 #import "MSTimeRowHeader.h"
 #import "MSCurrentTimeIndicator.h"
 #import "MSCurrentTimeGridline.h"
@@ -244,6 +243,10 @@
         dayColumnHeader.currentDay  = [startOfDay isEqualToDate:startOfCurrentDay];
         
         view = dayColumnHeader;
+        
+        UITapGestureRecognizer* tgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onDayColumnHeaderTap:)];
+        tgr.delegate = self;
+        [view addGestureRecognizer:tgr];
     } else if (kind == MSCollectionElementKindTimeRowHeader) {
         MSTimeRowHeader *timeRowHeader = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:MSTimeRowHeaderReuseIdentifier forIndexPath:indexPath];
         timeRowHeader.time = [self.weekFlowLayout dateForTimeRowHeaderAtIndexPath:indexPath];
@@ -293,6 +296,16 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+}
+
+//================================================
+#pragma mark - Collection view delegate
+//================================================
+-(void)onDayColumnHeaderTap:(UITapGestureRecognizer*)gestureRecognizer{
+    MSDayColumnHeader *dayColumnHeader = gestureRecognizer.view;
+    if(self.delegate) {
+        [self.delegate weekView:self dayColumnHeaderTapped:dayColumnHeader];
+    }
 }
 
 //================================================
