@@ -10,24 +10,27 @@
 #import "MSCollectionViewCalendarLayout.h"
 #import "MSDragableEvent.h"
 #import "MSEvent.h"
-
+#import "MSDayColumnHeader.h"
 
 @protocol MSWeekViewDelegate <NSObject>
 -(void)weekView:(id)sender eventSelected:(MSEventCell*)eventCell;
+-(void)weekView:(id)sender dayColumnHeaderTapped:(MSDayColumnHeader*)dayColumnHeader;
 @end
 
 @interface MSWeekView : UIView <UICollectionViewDataSource, UICollectionViewDelegate,MSCollectionViewDelegateCalendarLayout>
 {
     NSArray             * mEvents;
-    NSMutableDictionary * mDays;
+    NSMutableDictionary * mEventsGroupedByDay;
 }
 
+@property(strong, nonatomic) NSMutableDictionary* days;
 @property(strong,nonatomic) UICollectionView* collectionView;
 @property(strong,nonatomic) MSCollectionViewCalendarLayout* weekFlowLayout;
 
 @property(nonatomic) int daysToShowOnScreen;
 @property(nonatomic) int daysToShow;
 @property(strong,nonatomic) NSArray* events;
+@property(strong) NSDate *firstDateToShow;
 
 @property(weak,nonatomic) id<MSWeekViewDelegate> delegate;
 
