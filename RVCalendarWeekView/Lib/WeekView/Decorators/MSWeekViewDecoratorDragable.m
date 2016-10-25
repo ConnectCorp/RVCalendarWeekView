@@ -35,8 +35,8 @@
     gr.delegate = self;
     [cell addGestureRecognizer:gr];
     
-    BOOL showDragHandle = [self.delegate respondsToSelector:@selector(weekView:shouldShowBottomDragHandle:)] &&
-        [self.dragDelegate weekView:self.weekView shouldShowBottomDragHandle:cell.event];
+    BOOL showDragHandle = [self.dragDelegate respondsToSelector:@selector(weekView:shouldShowBottomDragHandle:)] &&
+    [self.dragDelegate weekView:self.weekView shouldShowBottomDragHandle:cell.event];
     if (showDragHandle) {
         cell.bottomDragHandle.hidden = NO;
         UIGestureRecognizer* pgr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onBottomDragHandlePan:)];
@@ -141,7 +141,7 @@
             parentView = parentView.superview;
         }
     }
-
+    
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
         mBottomDragView = [UIView new];
         mBottomDragView.frame = eventCell.frame;
@@ -149,7 +149,7 @@
         [self.baseWeekView.collectionView insertSubview:mBottomDragView belowSubview:eventCell];
     }
     else if(gestureRecognizer.state == UIGestureRecognizerStateChanged){
-        CGPoint cp = [gestureRecognizer locationInView:self.baseWeekView];
+        CGPoint cp = [gestureRecognizer locationInView:self.baseWeekView.collectionView];
         [UIView animateWithDuration:0.1 animations:^{
             CGFloat minEventDuration = 15; // Minutes
             CGFloat minHeight = (self.weekFlowLayout.hourHeight / 60) * minEventDuration;
@@ -185,7 +185,8 @@
 -(NSDate*)endDateForBottomDragable{
     CGPoint dropPoint = CGPointMake(CGRectGetMinX(mBottomDragView.frame),
                                     CGRectGetMaxY(mBottomDragView.frame));
-    return [self dateForPoint:dropPoint];
+    CGPoint dropPointInWeekView = [self.baseWeekView convertPoint:dropPoint fromView:mBottomDragView.superview];
+    return [self dateForPoint:dropPointInWeekView];
 }
 
 //=========================================================
