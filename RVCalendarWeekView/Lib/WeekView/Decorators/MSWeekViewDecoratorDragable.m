@@ -164,7 +164,8 @@
         
         [gestureRecognizer setTranslation:CGPointMake(0, 0) inView:self.baseWeekView];
     }
-    else if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
+    else if(gestureRecognizer.state == UIGestureRecognizerStateEnded ||
+            gestureRecognizer.state == UIGestureRecognizerStateCancelled){
         [self onBottomDragEnded:eventCell bottomDragView:mBottomDragView];
     }
 }
