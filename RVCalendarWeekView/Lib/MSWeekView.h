@@ -23,7 +23,6 @@
     NSMutableDictionary * mEventsGroupedByDay;
 }
 
-@property(strong, nonatomic) NSMutableDictionary* days;
 @property(strong,nonatomic) UICollectionView* collectionView;
 @property(strong,nonatomic) MSCollectionViewCalendarLayout* weekFlowLayout;
 
