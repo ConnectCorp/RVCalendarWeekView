@@ -177,7 +177,7 @@
 -(void)groupEventsByDays{
     
     //TODO : Improve this to make it faster
-    mEventsGroupedByDay = [mEvents groupBy:@"StartDate.toDeviceTimezoneDateString"].mutableCopy;
+    mEventsGroupedByDay = [mEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
 }
 
 //================================================
@@ -254,14 +254,14 @@
 {
     NSString *dateString    = [self dateStringForSection:indexPath.section];
     MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
-    return event.StartDate;
+    return event.startDate;
 }
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *dateString    = [self dateStringForSection:indexPath.section];
     MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
-    return event.EndDate;
+    return event.endDate ?: [event.startDate addHours:2]; // Default to 2 hour duration if no end date so event will still render on calendar.
 }
 
 - (NSDate *)currentTimeComponentsForCollectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout
