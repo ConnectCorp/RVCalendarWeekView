@@ -15,6 +15,7 @@
 
 @interface MSEventCellStandard ()
 
+@property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @property (nonatomic, strong) UIView *borderView;
 
 @end
@@ -33,6 +34,11 @@
         self.layer.shadowOffset = CGSizeMake(0.0, 4.0);
         self.layer.shadowRadius = 5.0;
         self.layer.shadowOpacity = 0.0;
+        
+        self.gradientLayer = [CAGradientLayer layer];
+        self.gradientLayer.frame = self.contentView.bounds;
+        self.gradientLayer.colors = @[(id)[self backgroundColorHighlighted:self.selected].CGColor, (id)[UIColor colorWithWhite:1.0 alpha:0.0].CGColor];
+        [self.contentView.layer addSublayer:self.gradientLayer];
         
         self.borderView = [UIView new];
         [self.contentView addSubview:self.borderView];
@@ -124,11 +130,13 @@
 
 - (void)updateColors
 {
-    self.contentView.backgroundColor = [self backgroundColorHighlighted:self.selected];
-    self.borderView.backgroundColor  = [self borderColor];
-    self.bottomDragHandle.backgroundColor  = [self bottomDragHandleColor];
-    self.title.textColor             = [self textColorHighlighted:self.selected];
-    self.location.textColor          = [self textColorHighlighted:self.selected];
+    self.contentView.backgroundColor         = ([self backgroundHasGradient: self.selected] ? [UIColor clearColor] : [self backgroundColorHighlighted:self.selected]);
+    self.gradientLayer.colors                = @[(id)[self backgroundColorHighlighted:self.selected].CGColor, (id)[UIColor colorWithWhite:1.0 alpha:0.0].CGColor];
+    self.gradientLayer.hidden                = ([self backgroundHasGradient: self.selected] ? false : true);
+    self.borderView.backgroundColor          = [self borderColor];
+    self.bottomDragHandle.backgroundColor    = [self bottomDragHandleColor];
+    self.title.textColor                     = [self textColorHighlighted:self.selected];
+    self.location.textColor                  = [self textColorHighlighted:self.selected];
 }
 
 - (NSDictionary *)titleAttributesHighlighted:(BOOL)highlighted
@@ -162,6 +170,10 @@
     return selected ? [UIColor colorWithHexString:@"35b1f1"] : [[UIColor colorWithHexString:@"35b1f1"] colorWithAlphaComponent:0.2];
 }
 
+- (BOOL)backgroundHasGradient:(BOOL)selected {
+    return false;
+}
+
 - (UIColor *)textColorHighlighted:(BOOL)selected
 {
     return selected ? [UIColor whiteColor] : [UIColor colorWithHexString:@"21729c"];
@@ -174,6 +186,11 @@
 
 - (UIColor *)bottomDragHandleColor {
     return [UIColor blackColor];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.gradientLayer.frame = self.contentView.bounds;
 }
 
 @end
