@@ -374,7 +374,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             
             CGFloat itemMinY = CGRectGetMaxY(dayColumnHeaderBackgroundAttributes.frame);
             CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
-            CGFloat itemWidth = nearbyintf(timeBetween.day * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
+            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
             
             itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, self.allDayItemHeight);
             itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEvent floating:true];
