@@ -7,20 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <DateTools/DTTimePeriod.h>
 
 #define MSEventDefaultReuseIdentifierPostfix @"default"
 
-@interface MSEvent : DTTimePeriod
+@interface MSEvent : NSObject
 
 @property (nonatomic, strong) NSString *reuseIdentifierPostfix;
 
-+(instancetype)make:(NSDate*)start;
-+(instancetype)make:(NSDate*)start end:(NSDate*)end;
+@property (nonatomic, strong) NSDate *startDate;
+@property (nonatomic, strong) NSDate *endDate;
+@property (nonatomic) BOOL hasStartTime;
+@property (nonatomic) BOOL hasEndTime;
 
-+(instancetype)make:(NSDate*)start duration:(int)minutes;
++ (instancetype)make:(NSDate *)start;
++ (instancetype)make:(NSDate *)start end:(NSDate *)end;
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime;
 
--(instancetype)initWithStart:(NSDate*)start end:(NSDate*)end;
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime;
 
 - (NSDate *)day;
 

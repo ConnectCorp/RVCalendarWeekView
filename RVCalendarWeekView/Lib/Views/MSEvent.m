@@ -11,28 +11,31 @@
 
 @implementation MSEvent
 
-+(instancetype)make:(NSDate*)start{
-    return [self make:start duration:60];
++ (instancetype)make:(NSDate *)start {
+    return [self make:start end:nil];
 }
 
-+(instancetype)make:(NSDate*)start end:(NSDate*)end{
-    return [[self alloc] initWithStart:start end:end];
++ (instancetype)make:(NSDate *)start end:(NSDate *)end {
+    return [self make:start end:end hasStartTime:true hasEndTime:true];
 }
 
-+(instancetype)make:(NSDate*)start duration:(int)minutes{
-    return [self make:start end:[start addMinutes:minutes]];
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime {
+    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime];
 }
 
-- (instancetype)initWithStart:(NSDate*)start end:(NSDate*)end{
-    self = [super initWithStartDate:start endDate:end];
-    if (self) {
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime {
+    if (self = [super init]) {
         self.reuseIdentifierPostfix = MSEventDefaultReuseIdentifierPostfix;
+        self.startDate = startDate;
+        self.endDate = endDate;
+        self.hasStartTime = hasStartTime;
+        self.hasEndTime = hasEndTime;
     }
     return self;
 }
 
-- (NSDate *)day{
-    return [NSCalendar.currentCalendar startOfDayForDate:self.StartDate];
+- (NSDate *)day {
+    return [NSCalendar.currentCalendar startOfDayForDate:self.startDate];
 }
 
 @end
