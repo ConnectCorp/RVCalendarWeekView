@@ -19,6 +19,7 @@
 - (NSDictionary *)titleAttributesHighlighted:(BOOL)highlighted;
 - (NSDictionary *)subtitleAttributesHighlighted:(BOOL)highlighted;
 - (UIColor *)backgroundColorHighlighted:(BOOL)selected;
+- (BOOL)backgroundHasGradient:(BOOL)selected;
 - (UIColor *)textColorHighlighted:(BOOL)selected;
 - (UIColor *)borderColor;
 
