@@ -54,7 +54,7 @@
         
         CGFloat borderWidth = 2.0;
         CGFloat contentMargin = 2.0;
-        UIEdgeInsets contentPadding = UIEdgeInsetsMake(1.0, (borderWidth + 4.0), 1.0, 4.0);
+        UIEdgeInsets contentPadding = UIEdgeInsetsMake(5.0, (borderWidth + 4.0), 5.0, 4.0);
         
         [self.borderView makeConstraints:^(MASConstraintMaker *make) {
             make.height.equalTo(self.height);
@@ -63,7 +63,7 @@
             make.top.equalTo(self.top);
         }];
         
-        CGFloat dragHandleHeight = 4.0;
+        CGFloat dragHandleHeight = 10.0;
         [self.bottomDragHandle makeConstraints:^(MASConstraintMaker *make) {
             make.height.equalTo(@(dragHandleHeight));
             make.width.equalTo(self.width);
@@ -173,7 +173,7 @@
 }
 
 - (UIColor *)bottomDragHandleColor {
-    return [UIColor blackColor];
+    return [UIColor colorWithWhite:0.0 alpha:0.5];
 }
 
 @end
