@@ -250,6 +250,12 @@
     return [self dateForSection:section];
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout allDayForItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *dateString    = [self dateStringForSection:indexPath.section];
+    MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
+    return event.hasStartTime == false && event.hasEndTime == false;
+}
+
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout startTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *dateString    = [self dateStringForSection:indexPath.section];
