@@ -43,7 +43,17 @@
         self.borderView = [UIView new];
         [self.contentView addSubview:self.borderView];
         
-        self.bottomDragHandle = [UIView new];
+        CGFloat dragHandleHeight = 14.0;
+        self.bottomDragHandle = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, dragHandleHeight)];
+        self.bottomDragHandle.backgroundColor = [UIColor clearColor];
+        
+        CGFloat triangleHeight = 10.0;
+        CGFloat triangleInset = 4.0;
+        UIView *triangleView = [[UIView alloc] initWithFrame:CGRectMake(frame.size.width - triangleHeight - triangleInset, dragHandleHeight - triangleHeight - triangleInset, triangleHeight, triangleHeight)];
+        triangleView.backgroundColor = [UIColor whiteColor];
+        triangleView.layer.mask = [self bottomRightTriangle];
+        [self.bottomDragHandle addSubview:triangleView];
+        
         [self.contentView addSubview:self.bottomDragHandle];
         
         self.title = [UILabel new];
@@ -69,7 +79,13 @@
             make.top.equalTo(self.top);
         }];
         
-        CGFloat dragHandleHeight = 10.0;
+        [triangleView makeConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(triangleHeight));
+            make.width.equalTo(@(triangleHeight));
+            make.right.equalTo(self.right).offset(-1 * triangleInset);
+            make.bottom.equalTo(self.bottom).offset(-1 * triangleInset);
+        }];
+        
         [self.bottomDragHandle makeConstraints:^(MASConstraintMaker *make) {
             make.height.equalTo(@(dragHandleHeight));
             make.width.equalTo(self.width);
@@ -91,6 +107,21 @@
         }];
     }
     return self;
+}
+
+- (CAShapeLayer *)bottomRightTriangle {
+    UIBezierPath *trianglePath = [UIBezierPath new];
+    [trianglePath moveToPoint: (CGPoint){10, 0}];
+    [trianglePath addLineToPoint: (CGPoint){0, 10}];
+    [trianglePath addLineToPoint: (CGPoint){10, 10}];
+    [trianglePath addLineToPoint: (CGPoint){10, 0}];
+    
+    CAShapeLayer *triangleLayer = [CAShapeLayer new];
+    triangleLayer.path = trianglePath.CGPath;
+    triangleLayer.frame = CGRectMake(0, 0, 10, 10);
+    triangleLayer.fillColor = [UIColor colorWithWhite:1.0 alpha:0.5].CGColor;
+    triangleLayer.fillRule = kCAFillRuleNonZero;
+    return triangleLayer;
 }
 
 #pragma mark - UICollectionViewCell
@@ -134,7 +165,6 @@
     self.gradientLayer.colors                = @[(id)[self backgroundColorHighlighted:self.selected].CGColor, (id)[UIColor colorWithWhite:1.0 alpha:0.0].CGColor];
     self.gradientLayer.hidden                = ([self backgroundHasGradient: self.selected] ? false : true);
     self.borderView.backgroundColor          = [self borderColor];
-    self.bottomDragHandle.backgroundColor    = [self bottomDragHandleColor];
     self.title.textColor                     = [self textColorHighlighted:self.selected];
     self.location.textColor                  = [self textColorHighlighted:self.selected];
 }
@@ -182,10 +212,6 @@
 - (UIColor *)borderColor
 {
     return [[self backgroundColorHighlighted:NO] colorWithAlphaComponent:1.0];
-}
-
-- (UIColor *)bottomDragHandleColor {
-    return [UIColor colorWithWhite:0.0 alpha:0.5];
 }
 
 - (void)layoutSubviews {
