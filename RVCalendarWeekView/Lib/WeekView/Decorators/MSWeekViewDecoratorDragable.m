@@ -106,12 +106,13 @@
     NSDate* newStartDate = [self dateForDragable];
     
     if([self canMoveToNewDate:eventCell.event newDate:newStartDate]){
-        eventCell.event.startDate = newStartDate;
         
         if (eventCell.event.endDate) {
             int duration = [eventCell.event.endDate timeIntervalSinceDate: eventCell.event.startDate];
-            eventCell.event.endDate = [eventCell.event.startDate dateByAddingSeconds:duration];
+            eventCell.event.endDate = [newStartDate dateByAddingSeconds:duration];
         }
+        eventCell.event.startDate = newStartDate;
+        
         [self.baseWeekView forceReload:YES];
         if(self.dragDelegate){
             [self.dragDelegate weekView:self.baseWeekView event:eventCell.event moved:newStartDate];
