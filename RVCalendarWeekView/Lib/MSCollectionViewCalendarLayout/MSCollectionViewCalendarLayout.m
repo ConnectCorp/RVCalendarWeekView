@@ -1163,7 +1163,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             }
             // All Day Event
             else if (elementKind == MSCollectionElementKindAllDayEvent) {
-                return (MSCollectionMinCellZ + 2.0);
+                return (MSCollectionMinOverlayZ - 1.0);
             }
             // Cell
             else if (elementKind == nil) {
@@ -1205,7 +1205,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             }
             // All Day Event
             else if (elementKind == MSCollectionElementKindAllDayEvent) {
-                return (MSCollectionMinCellZ + 2.0);
+                return (MSCollectionMinOverlayZ - 1.0);
             }
             // Cell
             else if (elementKind == nil) {
