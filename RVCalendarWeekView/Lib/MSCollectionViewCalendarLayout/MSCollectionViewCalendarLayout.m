@@ -596,94 +596,43 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     }];
 }
 
+static CGFloat OverlapInset = 4.0;
+
 - (void)adjustItemsForOverlap:(NSArray *)sectionItemAttributes inSection:(NSUInteger)section sectionMinX:(CGFloat)sectionMinX
 {
-    NSMutableSet *adjustedAttributes = [NSMutableSet new];
-    NSUInteger sectionZ = MSCollectionMinCellZ;
-    
     for (UICollectionViewLayoutAttributes *itemAttributes in sectionItemAttributes) {
+        itemAttributes.zIndex = MSCollectionMinCellZ;
         
-        // If an item's already been adjusted, move on to the next one
-        if ([adjustedAttributes containsObject:itemAttributes]) {
-            continue;
-        }
+        // Top right is used so that containment logic is uneffected by the insets this method applies. Minus 0.1 because CGRectContainsPoint appears to exclude far edge.
+        CGPoint itemTopRight = CGPointMake(CGRectGetMaxX(itemAttributes.frame) - 0.1, CGRectGetMinY(itemAttributes.frame));
         
-        // Find the other items that overlap with this item
+        // Find the other items that contain start time of this item but are not the exact same as this item and are not this item.
         NSMutableArray *overlappingItems = [NSMutableArray new];
-        CGRect itemFrame = itemAttributes.frame;
         [overlappingItems addObjectsFromArray:[sectionItemAttributes filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *layoutAttributes, NSDictionary *bindings) {
-            if ((layoutAttributes != itemAttributes)) {
-                return CGRectIntersectsRect(itemFrame, layoutAttributes.frame);
+            if (layoutAttributes != itemAttributes) {
+                return CGRectContainsPoint(layoutAttributes.frame, itemTopRight) && CGRectEqualToRect(layoutAttributes.frame, itemAttributes.frame) == false;
             } else {
                 return NO;
             }
         }]]];
         
-        // If there's items overlapping, we need to adjust them
-        if (overlappingItems.count) {
+        // Find the other items that are the exact same as this item. Include this item.
+        NSMutableArray *sameItems = [NSMutableArray new];
+        [sameItems addObjectsFromArray:[sectionItemAttributes filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *layoutAttributes, NSDictionary *bindings) {
+            return CGRectEqualToRect(layoutAttributes.frame, itemAttributes.frame);
+        }]]];
+        
+        // Item is inset if:
+        // 1) It is contained within another item. It is inset once for each item in which it is contained.
+        // 2) It is the exact same as another item. It is inset once for each item before it that is identical. Note this means that the first of a set of identical items is not inset.
+        NSInteger numberOfInsets = overlappingItems.count + (sameItems.count > 0 ? [sameItems indexOfObject:itemAttributes] : 0);
+        if (numberOfInsets) {
+            CGRect offsetFrame = itemAttributes.frame;
+            offsetFrame.origin.x = sectionMinX + self.cellMargin.left + numberOfInsets * OverlapInset;
+            offsetFrame.size.width = self.sectionWidth - self.cellMargin.left - self.cellMargin.right - numberOfInsets * OverlapInset;
             
-            // Add the item we're adjusting to the overlap set
-            [overlappingItems insertObject:itemAttributes atIndex:0];
-            
-            // Find the minY and maxY of the set
-            CGFloat minY = CGFLOAT_MAX;
-            CGFloat maxY = CGFLOAT_MIN;
-            for (UICollectionViewLayoutAttributes *overlappingItemAttributes in overlappingItems) {
-                if (CGRectGetMinY(overlappingItemAttributes.frame) < minY) {
-                    minY = CGRectGetMinY(overlappingItemAttributes.frame);
-                }
-                if (CGRectGetMaxY(overlappingItemAttributes.frame) > maxY) {
-                    maxY = CGRectGetMaxY(overlappingItemAttributes.frame);
-                }
-            }
-            
-            // Determine the number of divisions needed (maximum number of currently overlapping items)
-            NSInteger divisions = 1;
-            for (CGFloat currentY = minY; currentY <= maxY; currentY += 1.0) {
-                NSInteger numberItemsForCurrentY = 0;
-                for (UICollectionViewLayoutAttributes *overlappingItemAttributes in overlappingItems) {
-                    if ((currentY >= CGRectGetMinY(overlappingItemAttributes.frame)) && (currentY < CGRectGetMaxY(overlappingItemAttributes.frame))) {
-                        numberItemsForCurrentY++;
-                    }
-                }
-                if (numberItemsForCurrentY > divisions) {
-                    divisions = numberItemsForCurrentY;
-                }
-            }
-            
-            // Adjust the items to have a width of the section size divided by the number of divisions needed
-            CGFloat divisionWidth = nearbyintf(self.sectionWidth / divisions);
-            
-            NSMutableArray *dividedAttributes = [NSMutableArray array];
-            for (UICollectionViewLayoutAttributes *divisionAttributes in overlappingItems) {
-                
-                CGFloat itemWidth = (divisionWidth - self.cellMargin.left - self.cellMargin.right);
-                
-                // It it hasn't yet been adjusted, perform adjustment
-                if (![adjustedAttributes containsObject:divisionAttributes]) {
-                    
-                    CGRect divisionAttributesFrame = divisionAttributes.frame;
-                    divisionAttributesFrame.origin.x = (sectionMinX + self.cellMargin.left);
-                    divisionAttributesFrame.size.width = itemWidth;
-                    
-                    // Horizontal Layout
-                    NSInteger adjustments = 1;
-                    for (UICollectionViewLayoutAttributes *dividedItemAttributes in dividedAttributes) {
-                        if (CGRectIntersectsRect(dividedItemAttributes.frame, divisionAttributesFrame)) {
-                            divisionAttributesFrame.origin.x = sectionMinX + ((divisionWidth * adjustments) + self.cellMargin.left);
-                            adjustments++;
-                        }
-                    }
-                    
-                    // Stacking (lower items stack above higher items, since the title is at the top)
-                    divisionAttributes.zIndex = sectionZ;
-                    sectionZ ++;
-                    
-                    divisionAttributes.frame = divisionAttributesFrame;
-                    [dividedAttributes addObject:divisionAttributes];
-                    [adjustedAttributes addObject:divisionAttributes];
-                }
-            }
+            itemAttributes.frame = offsetFrame;
+            itemAttributes.zIndex = MSCollectionMinCellZ + numberOfInsets; // The more item is pushed inwards, the higher it is.
         }
     }
 }
