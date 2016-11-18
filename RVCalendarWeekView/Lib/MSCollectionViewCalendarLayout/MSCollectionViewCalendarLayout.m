@@ -332,6 +332,8 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
     NSMutableArray *allDayItemAttributes = [NSMutableArray new];
     
+@try { //HACK: this try/catch block was put in to keep the app from crashing - the root of the bug has NOT BEEN Solved  TODO: Fix this bug 
+    
     [sectionIndexes enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
         
         CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
@@ -421,6 +423,12 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         [self adjustAllDayItemsForOverlap: allDayItemAttributes];
     }];
     
+} //HACK: this try/catch block was put in to keep the app from crashing - the root of the bug has NOT BEEN Solved
+@catch (NSException *exception) {
+    // deal with the exception
+    NSLog(@"%@", exception);
+}
+
     // Horizontal Gridlines
     NSUInteger horizontalGridlineIndex = 0;
     for (NSInteger hour = earliestHour; hour <= latestHour; hour++) {
