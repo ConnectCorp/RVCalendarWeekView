@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (nonatomic) MSSectionLayoutType sectionLayoutType;
 @property (nonatomic) MSHeaderLayoutType headerLayoutType;
 @property (nonatomic) BOOL displayHeaderBackgroundAtOrigin;
-
+@property (nonatomic) BOOL showWeekends;
 
 - (NSInteger)earliestHour;
 - (NSInteger)latestHour;

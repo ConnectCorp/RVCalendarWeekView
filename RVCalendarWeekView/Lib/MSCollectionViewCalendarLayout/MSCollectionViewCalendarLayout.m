@@ -349,7 +349,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             
             //Weekends
             int weekDay = (currentTimeDateComponents.weekday + section) % 7;
-            if( weekDay == 0 || weekDay == 1){  //0 Saturday //1 sunday //2 Monday...
+            if(self.showWeekends && (weekDay == 0 || weekDay == 1)) {  //0 Saturday //1 sunday //2 Monday...
                 horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, calendarGridMinY, self.sectionWidth, sectionHeight);
                 horizontalGridlineAttributes.zIndex = -1;
             }
@@ -785,6 +785,8 @@ static CGFloat OverlapInset = 4.0;
     self.displayHeaderBackgroundAtOrigin = YES;
     self.sectionLayoutType = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? MSSectionLayoutTypeHorizontalTile : MSSectionLayoutTypeVerticalTile);
     self.headerLayoutType = MSHeaderLayoutTypeDayColumnAboveTimeRow;
+    
+    self.showWeekends = YES;
     
     [self initializeMinuteTick];
 }
