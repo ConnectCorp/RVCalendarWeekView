@@ -47,6 +47,7 @@
  */
 @property(nonatomic) Class currentTimeIndicatorClass;
 @property(nonatomic) Class currentTimeGridlineClass;
+@property(nonatomic) Class allDayEventsGridlineClass;
 @property(nonatomic) Class verticalGridlineClass;
 @property(nonatomic) Class horizontalGridlineClass;
 @property(nonatomic) Class timeRowHeaderBackgroundClass;

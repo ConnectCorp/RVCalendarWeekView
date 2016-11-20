@@ -16,6 +16,7 @@
 
 // Collection View Reusable Views
 #import "MSGridline.h"
+#import "MSAllDayEventsGridline.h"
 #import "MSTimeRowHeaderBackground.h"
 #import "MSDayColumnHeaderBackground.h"
 #import "MSEventCell.h"
@@ -88,6 +89,7 @@
     
     self.currentTimeIndicatorClass = MSCurrentTimeIndicator.class;
     self.currentTimeGridlineClass = MSCurrentTimeGridline.class;
+    self.allDayEventsGridlineClass = MSAllDayEventsGridline.class;
     self.verticalGridlineClass = MSGridline.class;
     self.horizontalGridlineClass = MSGridline.class;
     self.timeRowHeaderBackgroundClass = MSTimeRowHeaderBackground.class;
@@ -117,6 +119,7 @@
     // These are optional. If you don't want any of the decoration views, just don't register a class for them.
     [self.weekFlowLayout registerClass:self.currentTimeIndicatorClass forDecorationViewOfKind:MSCollectionElementKindCurrentTimeIndicator];
     [self.weekFlowLayout registerClass:self.currentTimeGridlineClass forDecorationViewOfKind:MSCollectionElementKindCurrentTimeHorizontalGridline];
+    [self.weekFlowLayout registerClass:self.allDayEventsGridlineClass forDecorationViewOfKind:MSCollectionElementKindAllDayEventsHorizontalGridline];
     [self.weekFlowLayout registerClass:self.verticalGridlineClass forDecorationViewOfKind:MSCollectionElementKindVerticalGridline];
     [self.weekFlowLayout registerClass:self.horizontalGridlineClass forDecorationViewOfKind:MSCollectionElementKindHorizontalGridline];
     [self.weekFlowLayout registerClass:self.timeRowHeaderBackgroundClass forDecorationViewOfKind:MSCollectionElementKindTimeRowHeaderBackground];

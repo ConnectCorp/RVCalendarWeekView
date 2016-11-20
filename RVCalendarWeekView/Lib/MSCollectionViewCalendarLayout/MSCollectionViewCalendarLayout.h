@@ -33,6 +33,7 @@ extern NSString * const MSCollectionElementKindDayColumnHeader;
 extern NSString * const MSCollectionElementKindTimeRowHeaderBackground;
 extern NSString * const MSCollectionElementKindDayColumnHeaderBackground;
 extern NSString * const MSCollectionElementKindAllDayEvent;
+extern NSString * const MSCollectionElementKindAllDayEventsHorizontalGridline;
 extern NSString * const MSCollectionElementKindCurrentTimeIndicator;
 extern NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline;
 extern NSString * const MSCollectionElementKindVerticalGridline;
@@ -65,6 +66,7 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (nonatomic) CGFloat horizontalGridlineHeight;
 @property (nonatomic) CGFloat verticalGridlineWidth;
 @property (nonatomic) CGFloat currentTimeHorizontalGridlineHeight;
+@property (nonatomic) CGFloat allDayHorizontalGridlineHeight;
 @property (nonatomic) UIEdgeInsets sectionMargin;
 @property (nonatomic) UIEdgeInsets contentMargin;
 @property (nonatomic) UIEdgeInsets cellMargin;
@@ -72,6 +74,8 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (nonatomic) MSHeaderLayoutType headerLayoutType;
 @property (nonatomic) BOOL displayHeaderBackgroundAtOrigin;
 @property (nonatomic) BOOL showWeekends;
+
+@property (nonatomic, readonly) CGFloat maxAllDayEventsSectionCombinedHeight;
 
 - (NSInteger)earliestHour;
 - (NSInteger)latestHour;
