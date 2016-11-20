@@ -19,12 +19,13 @@
 @property (nonatomic, strong) NSDate *endDate;
 @property (nonatomic) BOOL hasStartTime;
 @property (nonatomic) BOOL hasEndTime;
+@property (nonatomic) BOOL isSometimeEvent;
 
 + (instancetype)make:(NSDate *)start;
 + (instancetype)make:(NSDate *)start end:(NSDate *)end;
-+ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime;
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent;
 
-- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime;
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent;
 
 - (NSDate *)day;
 
