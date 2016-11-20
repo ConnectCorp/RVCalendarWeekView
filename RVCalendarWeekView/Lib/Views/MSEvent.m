@@ -38,4 +38,16 @@
     return [NSCalendar.currentCalendar startOfDayForDate:self.startDate];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    MSEvent *newEvent = [[[self class] allocWithZone:zone] init];
+    
+    newEvent.reuseIdentifierPostfix = [self.reuseIdentifierPostfix copyWithZone:zone];
+    newEvent.startDate = [self.startDate copyWithZone:zone];
+    newEvent.endDate = [self.endDate copyWithZone:zone];
+    newEvent.hasStartTime = self.hasStartTime;
+    newEvent.hasEndTime = self.hasEndTime;
+    
+    return newEvent;
+}
+
 @end

@@ -8,7 +8,7 @@
 
 #import "MSEvent.h"
 
-@interface MSEventStandard : MSEvent
+@interface MSEventStandard : MSEvent <NSCopying>
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *location;
