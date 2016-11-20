@@ -84,7 +84,7 @@
 
 - (UIColor *)titleBackgroundColorForCurrentDay:(BOOL)isCurrentDay
 {
-    return isCurrentDay ? [UIColor colorWithHexString:@"fd3935"] : [UIColor clearColor];
+    return isCurrentDay ? [UIColor colorWithRed:42/255.0 green: 183/255.0 blue: 183/255.0 alpha: 1.0] : [UIColor clearColor];
 }
 
 @end
