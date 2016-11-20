@@ -1,5 +1,5 @@
 //
-//  MSAllDayGridline.m
+//  MSAllDayEventsGridline.m
 //
 //  Created by Rahul Arora on 11/19/16.
 
