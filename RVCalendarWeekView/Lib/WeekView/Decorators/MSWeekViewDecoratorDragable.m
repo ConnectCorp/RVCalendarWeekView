@@ -36,7 +36,9 @@
     [cell addGestureRecognizer:gr];
     
     BOOL showDragHandle = [self.dragDelegate respondsToSelector:@selector(weekView:shouldShowBottomDragHandle:)] &&
-    [self.dragDelegate weekView:self.weekView shouldShowBottomDragHandle:cell.event];
+    [self.dragDelegate weekView:self.weekView shouldShowBottomDragHandle:cell.event] &&
+    cell.event.endDate == cell.displayedEvent.endDate; // Only show handle for last Displayed Events corresponding to Event
+    
     if (showDragHandle) {
         cell.bottomDragHandle.hidden = NO;
         UIGestureRecognizer* pgr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onBottomDragHandlePan:)];
@@ -65,6 +67,7 @@
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
         //NSLog(@"Pan began: %@",eventCell.akEvent.title);
         CGPoint touchOffsetInCell = [gestureRecognizer locationInView:gestureRecognizer.view];
+        startPoint = [gestureRecognizer locationInView:self.baseWeekView];
         mDragableEvent = [MSDragableEvent makeWithEventCell:eventCell andOffset:self.weekView.collectionView.contentOffset touchOffset:touchOffsetInCell];
         [self.baseWeekView addSubview:mDragableEvent];
     }
@@ -97,24 +100,24 @@
     }
     else if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
         //NSLog(@"Pan ended: %@",eventCell.akEvent.title);
-        [self onDragEnded:eventCell];
+        [self onDragEnded:eventCell startPoint: startPoint endPoint: [gestureRecognizer locationInView:self.baseWeekView]];
     }
 }
 
--(void)onDragEnded:(MSEventCell*)eventCell{
+- (void)onDragEnded:(MSEventCell *)eventCell startPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint {
+    NSDate *startPointDate = [self dateForPoint:startPoint];
+    NSDate *endPointDate = [self dateForPoint:endPoint];
+    int duration = [endPointDate timeIntervalSinceDate:startPointDate];
     
-    NSDate* newStartDate = [self dateForDragable];
+    NSDate *newStartDate = [eventCell.event.startDate dateByAddingSeconds:duration];
+    NSDate *newEndDate = [eventCell.event.endDate dateByAddingSeconds:duration];
     
     if([self canMoveToNewDate:eventCell.event newDate:newStartDate]){
-        
-        if (eventCell.event.endDate) {
-            int duration = [eventCell.event.endDate timeIntervalSinceDate: eventCell.event.startDate];
-            eventCell.event.endDate = [newStartDate dateByAddingSeconds:duration];
-        }
         eventCell.event.startDate = newStartDate;
+        eventCell.event.endDate = newEndDate;
         
         [self.baseWeekView forceReload:YES];
-        if(self.dragDelegate){
+        if (self.dragDelegate) {
             [self.dragDelegate weekView:self.baseWeekView event:eventCell.event moved:newStartDate];
         }
     }
@@ -122,7 +125,6 @@
     [mDragableEvent removeFromSuperview];
     mDragableEvent = nil;
 }
-
 
 -(NSDate*)dateForDragable{
     CGPoint dropPoint = CGPointMake(mDragableEvent.frame.origin.x + mDragableEvent.touchOffset.x,

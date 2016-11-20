@@ -30,4 +30,18 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    MSEventStandard *newEvent = [[MSEventStandard alloc] init];
+    
+    newEvent.reuseIdentifierPostfix = [self.reuseIdentifierPostfix copyWithZone:zone];
+    newEvent.startDate = [self.startDate copyWithZone:zone];
+    newEvent.endDate = [self.endDate copyWithZone:zone];
+    newEvent.hasStartTime = self.hasStartTime;
+    newEvent.hasEndTime = self.hasEndTime;
+    newEvent.title = [self.title copyWithZone:zone];
+    newEvent.location = [self.location copyWithZone:zone];
+    
+    return newEvent;
+}
+
 @end

@@ -18,7 +18,8 @@
 @end
 
 
-@interface MSWeekViewDecoratorDragable : MSWeekViewDecorator{    
+@interface MSWeekViewDecoratorDragable : MSWeekViewDecorator{
+    CGPoint startPoint;
     MSDragableEvent     * mDragableEvent;
     UIView * mBottomDragView;
 }

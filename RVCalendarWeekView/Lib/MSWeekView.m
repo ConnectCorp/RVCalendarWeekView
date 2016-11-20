@@ -23,6 +23,7 @@
 #import "MSTimeRowHeader.h"
 #import "MSCurrentTimeIndicator.h"
 #import "MSCurrentTimeGridline.h"
+#import "MSEventStandard.h"
 
 #define MSEventCellReuseIdentifier        @"MSEventCellReuseIdentifier"
 #define MSDayColumnHeaderReuseIdentifier  @"MSDayColumnHeaderReuseIdentifier"
@@ -93,8 +94,9 @@
     self.timeRowHeaderBackgroundClass = MSTimeRowHeaderBackground.class;
     self.dayColumnHeaderBackgroundClass = MSDayColumnHeaderBackground.class;
     
-    [self registerClasses];
+    self.clipsToBounds = YES;
     
+    [self registerClasses];
 }
 
 -(void)registerEventCellClass:(Class)cls forReuseIdentifierPostfix:(NSString *)postfix{
@@ -175,9 +177,41 @@
 }
 
 -(void)groupEventsByDays{
+    NSArray *splitEvents = [self splitEvents];
     
-    //TODO : Improve this to make it faster
-    mEventsGroupedByDay = [mEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
+    mEventsGroupedByDay = [splitEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
+}
+
+- (NSArray *)splitEvents {
+    NSMutableArray *splitEvents = [NSMutableArray array];
+    
+    for (MSEventStandard *event in mEvents) {
+        event.internalIdentifier = [NSUUID UUID];
+        
+        NSDate *endOfDay = [[[[NSCalendar currentCalendar] startOfDayForDate:event.startDate] addDay] substractSecond];
+        if (event.hasStartTime == true && event.hasEndTime == true && event.endDate > endOfDay) {
+            MSEventStandard *alteredEvent = [event copy];
+            alteredEvent.endDate = endOfDay;
+            alteredEvent.internalIdentifier = event.internalIdentifier;
+            [splitEvents addObject:alteredEvent];
+            
+            NSDate *newEventStart = [endOfDay addSecond];
+            while (newEventStart < event.endDate) {
+                MSEventStandard *newEvent = [event copy];
+                newEvent.title = @""; // Clear out title so it doesn't appear on multiple days
+                newEvent.startDate = newEventStart;
+                newEvent.endDate = ([newEventStart addDay] < event.endDate ? [[newEventStart addDay] substractSecond] : event.endDate); // If event spans more than one day, end it at midnight of the new day. Else end it at the designated end time.
+                newEvent.internalIdentifier = event.internalIdentifier;
+                [splitEvents addObject:newEvent];
+                
+                newEventStart = [newEventStart addDay];
+            }
+        } else {
+            [splitEvents addObject:event];
+        }
+    }
+    
+    return splitEvents;
 }
 
 //================================================
@@ -198,9 +232,14 @@
 {
     NSString *dateString    = [self dateStringForSection:indexPath.section];
     MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
+    MSEventStandard *originalEvent = nil;
+    for (MSEventStandard *mEvent in mEvents) {
+        originalEvent = (event.internalIdentifier == mEvent.internalIdentifier ? mEvent : originalEvent);
+    }
     
     MSEventCell *cell       = [collectionView dequeueReusableCellWithReuseIdentifier:[self reuseIdentifierForEvent:event] forIndexPath:indexPath];
-    cell.event              = event;
+    cell.event              = originalEvent;
+    cell.displayedEvent     = event;
     
     return cell;
 }

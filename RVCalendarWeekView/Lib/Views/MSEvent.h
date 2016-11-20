@@ -13,6 +13,7 @@
 @interface MSEvent : NSObject
 
 @property (nonatomic, strong) NSString *reuseIdentifierPostfix;
+@property (nonatomic, strong) NSUUID *internalIdentifier;
 
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
