@@ -16,20 +16,21 @@
 }
 
 + (instancetype)make:(NSDate *)start end:(NSDate *)end {
-    return [self make:start end:end hasStartTime:true hasEndTime:true];
+    return [self make:start end:end hasStartTime:true hasEndTime:true isSometimeEvent:false];
 }
 
-+ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime {
-    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime];
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent {
+    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent];
 }
 
-- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime {
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent {
     if (self = [super init]) {
         self.reuseIdentifierPostfix = MSEventDefaultReuseIdentifierPostfix;
         self.startDate = startDate;
         self.endDate = endDate;
         self.hasStartTime = hasStartTime;
         self.hasEndTime = hasEndTime;
+        self.isSometimeEvent = isSometimeEvent;
     }
     return self;
 }
@@ -46,6 +47,7 @@
     newEvent.endDate = [self.endDate copyWithZone:zone];
     newEvent.hasStartTime = self.hasStartTime;
     newEvent.hasEndTime = self.hasEndTime;
+    newEvent.isSometimeEvent = self.isSometimeEvent;
     
     return newEvent;
 }
