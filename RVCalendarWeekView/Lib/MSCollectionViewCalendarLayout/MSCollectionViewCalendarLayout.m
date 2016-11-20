@@ -34,6 +34,7 @@ NSString * const MSCollectionElementKindDayColumnHeader             = @"MSCollec
 NSString * const MSCollectionElementKindTimeRowHeaderBackground     = @"MSCollectionElementKindTimeRowHeaderBackground";
 NSString * const MSCollectionElementKindDayColumnHeaderBackground   = @"MSCollectionElementKindDayColumnHeaderBackground";
 NSString * const MSCollectionElementKindAllDayEvent                 = @"MSCollectionElementKindAllDayEvent";
+NSString * const MSCollectionElementKindAllDayEventsHorizontalGridline = @"MSCollectionElementKindAllDayEventsHorizontalGridline";
 NSString * const MSCollectionElementKindCurrentTimeIndicator        = @"MSCollectionElementKindCurrentTimeIndicator";
 NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline = @"MSCollectionElementKindCurrentTimeHorizontalGridline";
 NSString * const MSCollectionElementKindVerticalGridline            = @"MSCollectionElementKindVerticalGridline";
@@ -89,6 +90,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 @property (nonatomic, strong) NSCache *cachedEndTimeDateComponents;
 @property (nonatomic, strong) NSCache *cachedCurrentDateComponents;
 @property (nonatomic, assign) CGFloat cachedMaxColumnHeight;
+@property (nonatomic, assign) CGFloat cachedMaxAllDayEventsSectionCombinedHeight;
 @property (nonatomic, assign) NSInteger cachedEarliestHour;
 @property (nonatomic, assign) NSInteger cachedLatestHour;
 @property (nonatomic, strong) NSMutableDictionary *cachedColumnHeights;
@@ -109,6 +111,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 @property (nonatomic, strong) NSMutableDictionary *verticalGridlineAttributes;
 @property (nonatomic, strong) NSMutableDictionary *currentTimeIndicatorAttributes;
 @property (nonatomic, strong) NSMutableDictionary *currentTimeHorizontalGridlineAttributes;
+@property (nonatomic, strong) NSMutableDictionary *allDayHorizontalGridlineAttributes;
 
 - (void)initialize;
 // Minute Updates
@@ -221,6 +224,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         [self.allAttributes addObjectsFromArray:self.itemAttributes                         .allValues];
         [self.allAttributes addObjectsFromArray:self.currentTimeIndicatorAttributes         .allValues];
         [self.allAttributes addObjectsFromArray:self.currentTimeHorizontalGridlineAttributes.allValues];
+        [self.allAttributes addObjectsFromArray:self.allDayHorizontalGridlineAttributes     .allValues];
     }
 }
 
@@ -249,11 +253,11 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     NSInteger latestHour = [self latestHour];
     
     CGFloat sectionWidth = (self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right);
-    CGFloat sectionHeight = nearbyintf((self.hourHeight * (latestHour - earliestHour)) + (self.sectionMargin.top + self.sectionMargin.bottom));
+    CGFloat sectionHeight = nearbyintf((self.hourHeight * (latestHour - earliestHour)) + (self.sectionMargin.top + self.sectionMargin.bottom)) + self.maxAllDayEventsSectionCombinedHeight;
     CGFloat calendarGridMinX = (self.timeRowHeaderWidth + self.contentMargin.left);
     CGFloat calendarGridMinY = (self.dayColumnHeaderHeight + self.contentMargin.top);
     CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
-    CGFloat calendarContentMinY = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top);
+    CGFloat calendarContentMinY = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top) + self.maxAllDayEventsSectionCombinedHeight;
     CGFloat calendarGridWidth = (self.collectionViewContentSize.width - self.timeRowHeaderWidth - self.contentMargin.right);
     
     // Time Row Header
@@ -328,6 +332,18 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         timeRowHeaderAttributes.frame = CGRectMake(timeRowHeaderMinX, titleRowHeaderMinY, self.timeRowHeaderWidth, self.hourHeight);
         timeRowHeaderAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindTimeRowHeader floating:timeRowHeaderFloating];
         timeRowHeaderIndex++;
+    }
+    
+    // All Day Horizontal Gridline
+    if (self.maxAllDayEventsSectionCombinedHeight) {
+        NSIndexPath *allDayHorizontalGridlineIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        UICollectionViewLayoutAttributes *allDayHorizontalGridlineAttributes = [self layoutAttributesForDecorationViewAtIndexPath:allDayHorizontalGridlineIndexPath ofKind:MSCollectionElementKindAllDayEventsHorizontalGridline withItemCache:self.allDayHorizontalGridlineAttributes];
+        
+        CGFloat allDayHorizontalGridlineMinX = calendarContentMinX;
+        CGFloat allDayHorizontalGridlineMinY = CGRectGetMaxY(dayColumnHeaderBackgroundAttributes.frame) + self.maxAllDayEventsSectionCombinedHeight;
+        CGFloat allDayHorizontalGridlineWidth = sectionWidth * [self numberOfSectionsInCollectionView];
+        allDayHorizontalGridlineAttributes.frame = CGRectMake(allDayHorizontalGridlineMinX, allDayHorizontalGridlineMinY, allDayHorizontalGridlineWidth, self.allDayHorizontalGridlineHeight);
+        allDayHorizontalGridlineAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEventsHorizontalGridline];
     }
     
     NSMutableArray *allDayItemAttributes = [NSMutableArray new];
@@ -645,6 +661,33 @@ static CGFloat OverlapInset = 4.0;
     }
 }
 
+- (CGFloat)maxAllDayEventsSectionCombinedHeight {
+    if (self.cachedMaxAllDayEventsSectionCombinedHeight != CGFLOAT_MIN) {
+        return self.cachedMaxAllDayEventsSectionCombinedHeight;
+    }
+    
+    CGFloat maxAllDayEventsSectionCombinedHeight = 0.0;
+    NSInteger maxAllDayItemsCountInSection = 0;
+    for (NSInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
+        NSInteger currentAllDayItemsCountInSection = 0;
+        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
+            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+            if ([self allDayForIndexPath:itemIndexPath]) { currentAllDayItemsCountInSection++; }
+        }
+        if (currentAllDayItemsCountInSection > maxAllDayItemsCountInSection) {
+            maxAllDayItemsCountInSection = currentAllDayItemsCountInSection;
+        }
+    }
+    
+    maxAllDayEventsSectionCombinedHeight = maxAllDayItemsCountInSection * self.allDayItemHeight;
+    if (maxAllDayEventsSectionCombinedHeight != 0.0) {
+        self.cachedMaxAllDayEventsSectionCombinedHeight = maxAllDayEventsSectionCombinedHeight;
+        return maxAllDayEventsSectionCombinedHeight;
+    } else {
+        return maxAllDayEventsSectionCombinedHeight;
+    }
+}
+
 - (void)adjustAllDayItemsForOverlap:(NSArray *)allDayItemAttributes {
     
     // Iterate through items in reverse so that earlier items appear vertically above later items.
@@ -706,6 +749,9 @@ static CGFloat OverlapInset = 4.0;
     else if (decorationViewKind == MSCollectionElementKindCurrentTimeHorizontalGridline) {
         return self.currentTimeHorizontalGridlineAttributes[indexPath];
     }
+    else if (decorationViewKind == MSCollectionElementKindAllDayEventsHorizontalGridline) {
+        return self.allDayHorizontalGridlineAttributes[indexPath];
+    }
     else if (decorationViewKind == MSCollectionElementKindVerticalGridline) {
         return self.verticalGridlineAttributes[indexPath];
     }
@@ -758,6 +804,7 @@ static CGFloat OverlapInset = 4.0;
     self.cachedEndTimeDateComponents = [NSCache new];
     self.cachedCurrentDateComponents = [NSCache new];
     self.cachedMaxColumnHeight = CGFLOAT_MIN;
+    self.cachedMaxAllDayEventsSectionCombinedHeight = CGFLOAT_MIN;
     self.cachedEarliestHour = NSIntegerMax;
     self.cachedLatestHour = NSIntegerMin;
     self.cachedColumnHeights = [NSMutableDictionary new];
@@ -776,6 +823,7 @@ static CGFloat OverlapInset = 4.0;
     self.horizontalGridlineAttributes = [NSMutableDictionary new];
     self.currentTimeIndicatorAttributes = [NSMutableDictionary new];
     self.currentTimeHorizontalGridlineAttributes = [NSMutableDictionary new];
+    self.allDayHorizontalGridlineAttributes = [NSMutableDictionary new];
     
     self.hourHeight = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 80.0 : 80.0);
     self.sectionWidth = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 194.0 : 254.0);
@@ -784,6 +832,7 @@ static CGFloat OverlapInset = 4.0;
     self.timeRowHeaderWidth = 56.0;
     self.currentTimeIndicatorSize = CGSizeMake(self.timeRowHeaderWidth, 10.0);
     self.currentTimeHorizontalGridlineHeight = 1.0;
+    self.allDayHorizontalGridlineHeight = 1.0;
     self.verticalGridlineWidth = (([[UIScreen mainScreen] scale] == 2.0) ? 0.5 : 1.0);
     self.horizontalGridlineHeight = (([[UIScreen mainScreen] scale] == 2.0) ? 0.5 : 1.0);;
     self.sectionMargin = UIEdgeInsetsMake(20.0, 0.0, 20.0, 0.0);
@@ -861,6 +910,7 @@ static CGFloat OverlapInset = 4.0;
     self.cachedEarliestHour     = NSIntegerMax;
     self.cachedLatestHour       = NSIntegerMin;
     self.cachedMaxColumnHeight  = CGFLOAT_MIN;
+    self.cachedMaxAllDayEventsSectionCombinedHeight  = CGFLOAT_MIN;
     [self.cachedColumnHeights                   removeAllObjects];
     [self.cachedEarliestHours                   removeAllObjects];
     [self.cachedLatestHours                     removeAllObjects];
@@ -1039,7 +1089,8 @@ static CGFloat OverlapInset = 4.0;
             maxSectionHeight = sectionColumnHeight;
         }
     }
-    CGFloat headerAdjustedMaxColumnHeight = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top + maxSectionHeight + self.sectionMargin.bottom + self.contentMargin.bottom);
+    CGFloat headerAdjustedMaxColumnHeight = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top + maxSectionHeight + self.sectionMargin.bottom + self.contentMargin.bottom) + self.maxAllDayEventsSectionCombinedHeight;
+    
     if (maxSectionHeight != 0.0) {
         self.cachedMaxColumnHeight = headerAdjustedMaxColumnHeight;
         return headerAdjustedMaxColumnHeight;
@@ -1122,6 +1173,10 @@ static CGFloat OverlapInset = 4.0;
             }
             // All Day Event
             else if (elementKind == MSCollectionElementKindAllDayEvent) {
+                return (MSCollectionMinOverlayZ - 1.0);
+            }
+            // All Day Grid Line
+            else if (elementKind == MSCollectionElementKindAllDayEventsHorizontalGridline) {
                 return (MSCollectionMinOverlayZ - 1.0);
             }
             // Cell

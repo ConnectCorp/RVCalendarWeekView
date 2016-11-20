@@ -113,7 +113,7 @@
 }
 
 -(float)viewYToContentY:(float)y{
-    return y - self.weekFlowLayout.dayColumnHeaderHeight + self.collectionView.contentOffset.y - self.weekFlowLayout.contentMargin.top - self.weekFlowLayout.sectionMargin.top;
+    return y - self.weekFlowLayout.dayColumnHeaderHeight - self.weekFlowLayout.maxAllDayEventsSectionCombinedHeight + self.collectionView.contentOffset.y - self.weekFlowLayout.contentMargin.top - self.weekFlowLayout.sectionMargin.top;
 }
 
 -(CGFloat)round:(float)number toNearest:(float)pivot{
