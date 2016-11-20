@@ -22,5 +22,6 @@
 - (BOOL)backgroundHasGradient:(BOOL)selected;
 - (UIColor *)textColorHighlighted:(BOOL)selected;
 - (UIColor *)borderColor;
+- (BOOL)borderIsAroundEntireCell;
 
 @end

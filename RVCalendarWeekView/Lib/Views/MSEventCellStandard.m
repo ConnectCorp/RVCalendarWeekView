@@ -165,6 +165,9 @@
     self.gradientLayer.colors                = @[(id)[self backgroundColorHighlighted:self.selected].CGColor, (id)[UIColor colorWithWhite:1.0 alpha:0.0].CGColor];
     self.gradientLayer.hidden                = ([self backgroundHasGradient: self.selected] ? false : true);
     self.borderView.backgroundColor          = [self borderColor];
+    self.contentView.layer.borderColor       = [self borderColor].CGColor;
+    self.borderView.hidden                   = [self borderIsAroundEntireCell];
+    self.contentView.layer.borderWidth       = ([self borderIsAroundEntireCell] ? 2.0 : 0.0);
     self.title.textColor                     = [self textColorHighlighted:self.selected];
     self.location.textColor                  = [self textColorHighlighted:self.selected];
 }
@@ -201,7 +204,7 @@
 }
 
 - (BOOL)backgroundHasGradient:(BOOL)selected {
-    return false;
+    return NO;
 }
 
 - (UIColor *)textColorHighlighted:(BOOL)selected
@@ -212,6 +215,10 @@
 - (UIColor *)borderColor
 {
     return [[self backgroundColorHighlighted:NO] colorWithAlphaComponent:1.0];
+}
+
+- (BOOL)borderIsAroundEntireCell {
+    return NO;
 }
 
 - (void)layoutSubviews {
