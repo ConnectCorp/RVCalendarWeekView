@@ -30,4 +30,13 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    MSEventStandard *newEvent = [super copyWithZone:zone];
+    
+    newEvent.title = [self.title copyWithZone:zone];
+    newEvent.location = [self.location copyWithZone:zone];
+    
+    return newEvent;
+}
+
 @end

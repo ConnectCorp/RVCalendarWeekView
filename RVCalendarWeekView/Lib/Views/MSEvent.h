@@ -10,9 +10,10 @@
 
 #define MSEventDefaultReuseIdentifierPostfix @"default"
 
-@interface MSEvent : NSObject
+@interface MSEvent : NSObject <NSCopying>
 
 @property (nonatomic, strong) NSString *reuseIdentifierPostfix;
+@property (nonatomic, strong) NSUUID *internalIdentifier;
 
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
