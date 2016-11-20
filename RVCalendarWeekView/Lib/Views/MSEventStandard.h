@@ -15,8 +15,8 @@
 
 + (instancetype)make:(NSDate *)start title:(NSString *)title location:(NSString *)location;
 + (instancetype)make:(NSDate *)start end:(NSDate *)end title:(NSString *)title location:(NSString *)location;
-+ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime title:(NSString *)title location:(NSString *)location;
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent title:(NSString *)title location:(NSString *)location;
 
-- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime title:(NSString*)title location:(NSString*)location;
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent title:(NSString*)title location:(NSString*)location;
 
 @end
