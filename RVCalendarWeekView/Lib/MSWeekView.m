@@ -180,17 +180,21 @@
 }
 
 -(void)groupEventsByDays{
-    NSArray *splitEvents = [self splitEvents];
-    
-    mEventsGroupedByDay = [splitEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
+    [self assignEventsUUIDs];
+    NSArray *updatedEvents = [self splitEventsByDay: [self truncateEventsAtToday:mEvents]];
+    mEventsGroupedByDay = [updatedEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
 }
 
-- (NSArray *)splitEvents {
-    NSMutableArray *splitEvents = [NSMutableArray array];
-    
+- (void)assignEventsUUIDs {
     for (MSEventStandard *event in mEvents) {
         event.internalIdentifier = [NSUUID UUID];
-        
+    }
+}
+
+- (NSArray *)splitEventsByDay:(NSArray *)events {
+    NSMutableArray *splitEvents = [NSMutableArray array];
+    
+    for (MSEventStandard *event in events) {
         NSDate *endOfDay = [[[[NSCalendar currentCalendar] startOfDayForDate:event.startDate] addDay] substractSecond];
         if (event.hasStartTime == true && event.hasEndTime == true && event.endDate > endOfDay) {
             MSEventStandard *alteredEvent = [event copy];
@@ -215,6 +219,25 @@
     }
     
     return splitEvents;
+}
+
+- (NSArray *)truncateEventsAtToday:(NSArray *)events {
+    NSMutableArray *truncatedEvents = [NSMutableArray array];
+    
+    NSDate *firstDateToShow = self.firstDateToShow ?: [NSDate today:@"device"];
+    
+    for (MSEventStandard *event in events) {
+        if (event.startDate < firstDateToShow && event.endDate >= firstDateToShow) {
+            MSEventStandard *alteredEvent = [event copy];
+            alteredEvent.startDate = firstDateToShow;
+            alteredEvent.internalIdentifier = event.internalIdentifier;
+            [truncatedEvents addObject:alteredEvent];
+        } else {
+            [truncatedEvents addObject:event];
+        }
+    }
+    
+    return truncatedEvents;
 }
 
 //================================================
