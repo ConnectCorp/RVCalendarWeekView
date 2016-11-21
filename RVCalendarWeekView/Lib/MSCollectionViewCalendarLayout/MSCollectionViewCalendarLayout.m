@@ -866,7 +866,7 @@ static CGFloat OverlapInset = 4.0;
     
     self.displayHeaderBackgroundAtOrigin = YES;
     self.sectionLayoutType = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? MSSectionLayoutTypeHorizontalTile : MSSectionLayoutTypeVerticalTile);
-    self.headerLayoutType = MSHeaderLayoutTypeDayColumnAboveTimeRow;
+    self.headerLayoutType = MSHeaderLayoutTypeTimeRowAboveDayColumn;
     
     self.showWeekends = YES;
     
@@ -1179,23 +1179,23 @@ static CGFloat OverlapInset = 4.0;
         case MSSectionLayoutTypeHorizontalTile: {
             // Current Time Indicator
             if (elementKind == MSCollectionElementKindCurrentTimeIndicator) {
-                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 9.0 : 4.0) : (floating ? 10.0 : 5.0)));
+                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 9.0 : 4.0) : (floating ? 7.0 : 2.0)));
             }
             // Time Row Header
             else if (elementKind == MSCollectionElementKindTimeRowHeader) {
-                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 8.0 : 3.0) : (floating ? 9.0 : 4.0)));
+                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 8.0 : 3.0) : (floating ? 6.0 : 1.0)));
             }
             // Time Row Header Background
             else if (elementKind == MSCollectionElementKindTimeRowHeaderBackground) {
-                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 7.0 : 2.0) : (floating ? 8.0 : 3.0)));
+                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 7.0 : 2.0) : (floating ? 5.0 : 0.0)));
             }
             // Day Column Header
             else if (elementKind == MSCollectionElementKindDayColumnHeader) {
-                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 6.0 : 1.0) : (floating ? 6.0 : 1.0)));
+                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 6.0 : 1.0) : (floating ? 9.0 : 4.0)));
             }
             // Day Column Header Background
             else if (elementKind == MSCollectionElementKindDayColumnHeaderBackground) {
-                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 5.0 : 0.0) : (floating ? 5.0 : 0.0)));
+                return (MSCollectionMinOverlayZ + ((self.headerLayoutType == MSHeaderLayoutTypeTimeRowAboveDayColumn) ? (floating ? 5.0 : 0.0) : (floating ? 8.0 : 3.0)));
             }
             // All Day Event
             else if (elementKind == MSCollectionElementKindAllDayEvent) {
@@ -1207,7 +1207,7 @@ static CGFloat OverlapInset = 4.0;
             }
             // Sometime Event
             else if (elementKind == MSCollectionElementKindSometimeEvent) {
-                return [self zIndexForElementKind:MSCollectionElementKindTimeRowHeaderBackground floating:floating] - 1.0;
+                return [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:floating] + 0.1;
             }
             // Cell
             else if (elementKind == nil) {
