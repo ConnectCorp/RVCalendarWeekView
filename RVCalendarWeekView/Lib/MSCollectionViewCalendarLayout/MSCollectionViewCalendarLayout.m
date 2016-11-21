@@ -35,6 +35,7 @@ NSString * const MSCollectionElementKindTimeRowHeaderBackground     = @"MSCollec
 NSString * const MSCollectionElementKindDayColumnHeaderBackground   = @"MSCollectionElementKindDayColumnHeaderBackground";
 NSString * const MSCollectionElementKindAllDayEvent                 = @"MSCollectionElementKindAllDayEvent";
 NSString * const MSCollectionElementKindAllDayEventsHorizontalGridline = @"MSCollectionElementKindAllDayEventsHorizontalGridline";
+NSString * const MSCollectionElementKindSometimeEvent                 = @"MSCollectionElementKindSometimeEvent";
 NSString * const MSCollectionElementKindCurrentTimeIndicator        = @"MSCollectionElementKindCurrentTimeIndicator";
 NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline = @"MSCollectionElementKindCurrentTimeHorizontalGridline";
 NSString * const MSCollectionElementKindVerticalGridline            = @"MSCollectionElementKindVerticalGridline";
@@ -86,6 +87,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 @property (nonatomic, assign) BOOL needsToPopulateAttributesForAllSections;
 @property (nonatomic, strong) NSCache *cachedDayDateComponents;
 @property (nonatomic, strong) NSCache *cachedAllDay;
+@property (nonatomic, strong) NSCache *cachedSometime;
 @property (nonatomic, strong) NSCache *cachedStartTimeDateComponents;
 @property (nonatomic, strong) NSCache *cachedEndTimeDateComponents;
 @property (nonatomic, strong) NSCache *cachedCurrentDateComponents;
@@ -399,6 +401,26 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEvent floating:true];
         }
         
+        // Sometime Items
+        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
+            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+            
+            if (![self sometimeForIndexPath:itemIndexPath]) { continue; }
+            
+            UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
+            
+            NSDateComponents *itemStartTime = [self startTimeForIndexPath:itemIndexPath];
+            NSDateComponents *itemEndTime   = [self endTimeForIndexPath:itemIndexPath];
+            NSDateComponents *timeBetween = [NSCalendar.currentCalendar components:NSCalendarUnitDay fromDateComponents:itemStartTime toDateComponents:itemEndTime options:0];
+            
+            CGFloat itemMinY = CGRectGetMinY(dayColumnHeaderBackgroundAttributes.frame);
+            CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
+            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
+            CGFloat itemHeight = CGRectGetHeight(self.collectionView.frame);
+            itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
+            itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindSometimeEvent floating:dayColumnHeaderFloating];
+        }
+        
         // Other Items
         if (needsToPopulateItemAttributes) {
             NSMutableArray *sectionItemAttributes = [NSMutableArray new];
@@ -406,7 +428,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
                 
                 NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
                 
-                if ([self allDayForIndexPath:itemIndexPath]) { continue; }
+                if ([self allDayForIndexPath:itemIndexPath] || [self sometimeForIndexPath:itemIndexPath]) { continue; }
                 
                 UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
                 [sectionItemAttributes addObject:itemAttributes];
@@ -800,6 +822,7 @@ static CGFloat OverlapInset = 4.0;
     self.needsToPopulateAttributesForAllSections = YES;
     self.cachedDayDateComponents = [NSCache new];
     self.cachedAllDay = [NSCache new];
+    self.cachedSometime = [NSCache new];
     self.cachedStartTimeDateComponents = [NSCache new];
     self.cachedEndTimeDateComponents = [NSCache new];
     self.cachedCurrentDateComponents = [NSCache new];
@@ -841,7 +864,7 @@ static CGFloat OverlapInset = 4.0;
     
     self.displayHeaderBackgroundAtOrigin = YES;
     self.sectionLayoutType = ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? MSSectionLayoutTypeHorizontalTile : MSSectionLayoutTypeVerticalTile);
-    self.headerLayoutType = MSHeaderLayoutTypeDayColumnAboveTimeRow;
+    self.headerLayoutType = MSHeaderLayoutTypeTimeRowAboveDayColumn;
     
     self.showWeekends = YES;
     
@@ -902,6 +925,7 @@ static CGFloat OverlapInset = 4.0;
     // Invalidate cached Components
     [self.cachedDayDateComponents               removeAllObjects];
     [self.cachedAllDay                          removeAllObjects];
+    [self.cachedSometime                        removeAllObjects];
     [self.cachedStartTimeDateComponents         removeAllObjects];
     [self.cachedEndTimeDateComponents           removeAllObjects];
     [self.cachedCurrentDateComponents           removeAllObjects];
@@ -1179,6 +1203,10 @@ static CGFloat OverlapInset = 4.0;
             else if (elementKind == MSCollectionElementKindAllDayEventsHorizontalGridline) {
                 return (MSCollectionMinOverlayZ - 1.0);
             }
+            // Sometime Event
+            else if (elementKind == MSCollectionElementKindSometimeEvent) {
+                return [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:floating] + 0.1;
+            }
             // Cell
             else if (elementKind == nil) {
                 return MSCollectionMinCellZ;
@@ -1360,6 +1388,19 @@ static CGFloat OverlapInset = 4.0;
     [self.cachedAllDay setObject:@(allDay) forKey:indexPath];
     return allDay;
 }
+
+- (BOOL)sometimeForIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.cachedSometime objectForKey:indexPath]) {
+        return [[self.cachedSometime objectForKey:indexPath] boolValue];
+    }
+    
+    BOOL sometime = [self.delegate collectionView:self.collectionView layout:self sometimeForItemAtIndexPath:indexPath];
+    
+    [self.cachedSometime setObject:@(sometime) forKey:indexPath];
+    return sometime;
+}
+
 
 - (NSDateComponents *)startTimeForIndexPath:(NSIndexPath *)indexPath
 {
