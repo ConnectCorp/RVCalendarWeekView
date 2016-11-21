@@ -379,8 +379,6 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             
         }
         
-        
-        
         // All Day Items
         for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
             NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
