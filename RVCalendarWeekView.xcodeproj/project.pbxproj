@@ -10,6 +10,7 @@
 		276A4B1B1DB15C7B00F6308F /* MSEventCellNib.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B1A1DB15C7B00F6308F /* MSEventCellNib.m */; };
 		276A4B1E1DB15C8800F6308F /* MSEventCellStandard.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B1D1DB15C8800F6308F /* MSEventCellStandard.m */; };
 		276A4B211DB1624800F6308F /* MSEventStandard.m in Sources */ = {isa = PBXBuildFile; fileRef = 276A4B201DB1624800F6308F /* MSEventStandard.m */; };
+		303530441DE27A1000E1B3EB /* MSAllDayEventsGridline.m in Sources */ = {isa = PBXBuildFile; fileRef = 303530431DE27A1000E1B3EB /* MSAllDayEventsGridline.m */; };
 		76276EB71D6B81D4002C1D39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EB61D6B81D4002C1D39 /* main.m */; };
 		76276EBA1D6B81D4002C1D39 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EB91D6B81D4002C1D39 /* AppDelegate.m */; };
 		76276EBD1D6B81D4002C1D39 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76276EBC1D6B81D4002C1D39 /* ViewController.m */; };
@@ -59,6 +60,8 @@
 		276A4B1D1DB15C8800F6308F /* MSEventCellStandard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEventCellStandard.m; sourceTree = "<group>"; };
 		276A4B1F1DB1624800F6308F /* MSEventStandard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MSEventStandard.h; path = Lib/Views/MSEventStandard.h; sourceTree = "<group>"; };
 		276A4B201DB1624800F6308F /* MSEventStandard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MSEventStandard.m; path = Lib/Views/MSEventStandard.m; sourceTree = "<group>"; };
+		303530421DE27A1000E1B3EB /* MSAllDayEventsGridline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAllDayEventsGridline.h; sourceTree = "<group>"; };
+		303530431DE27A1000E1B3EB /* MSAllDayEventsGridline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSAllDayEventsGridline.m; sourceTree = "<group>"; };
 		55A9198AF6C016D51B48E4CB /* Pods-RVCalendarWeekView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RVCalendarWeekView.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RVCalendarWeekView/Pods-RVCalendarWeekView.debug.xcconfig"; sourceTree = "<group>"; };
 		76276EB21D6B81D4002C1D39 /* RVCalendarWeekView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RVCalendarWeekView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76276EB61D6B81D4002C1D39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -280,6 +283,8 @@
 				76276EE51D6B826B002C1D39 /* MSCurrentTimeIndicator.m */,
 				76276EEE1D6B826B002C1D39 /* MSGridline.h */,
 				76276EEF1D6B826B002C1D39 /* MSGridline.m */,
+				303530421DE27A1000E1B3EB /* MSAllDayEventsGridline.h */,
+				303530431DE27A1000E1B3EB /* MSAllDayEventsGridline.m */,
 			);
 			name = Grid;
 			sourceTree = "<group>";
@@ -509,6 +514,7 @@
 			files = (
 				763A802A1D6C4488002E0CBF /* MSDragableEvent.m in Sources */,
 				76276EF51D6B826B002C1D39 /* MSCollectionViewCalendarLayout.m in Sources */,
+				303530441DE27A1000E1B3EB /* MSAllDayEventsGridline.m in Sources */,
 				76FC4A001D7865BB004CF995 /* MSWeekViewDecoratorInfinite.m in Sources */,
 				768458251D7847080080A27A /* MSWeekViewDecorator.m in Sources */,
 				276A4B1B1DB15C7B00F6308F /* MSEventCellNib.m in Sources */,
