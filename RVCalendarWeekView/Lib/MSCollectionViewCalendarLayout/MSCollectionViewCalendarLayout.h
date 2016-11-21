@@ -34,6 +34,7 @@ extern NSString * const MSCollectionElementKindTimeRowHeaderBackground;
 extern NSString * const MSCollectionElementKindDayColumnHeaderBackground;
 extern NSString * const MSCollectionElementKindAllDayEvent;
 extern NSString * const MSCollectionElementKindAllDayEventsHorizontalGridline;
+extern NSString * const MSCollectionElementKindSometimeEvent;
 extern NSString * const MSCollectionElementKindCurrentTimeIndicator;
 extern NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline;
 extern NSString * const MSCollectionElementKindVerticalGridline;
@@ -97,6 +98,7 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout dayForSection:(NSInteger)section;
 - (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout allDayForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout sometimeForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout startTimeForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)currentTimeComponentsForCollectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout;
