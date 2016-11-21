@@ -295,7 +295,7 @@
 - (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout allDayForItemAtIndexPath:(NSIndexPath *)indexPath {
     NSString *dateString    = [self dateStringForSection:indexPath.section];
     MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
-    return event.hasStartTime == false && event.hasEndTime == false;
+    return event.hasStartTime == false && event.hasEndTime == false && !event.isSometimeEvent;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout sometimeForItemAtIndexPath:(NSIndexPath *)indexPath {
