@@ -16,14 +16,14 @@
 }
 
 + (instancetype)make:(NSDate *)start end:(NSDate *)end {
-    return [self make:start end:end hasStartTime:true hasEndTime:true isSometimeEvent:false];
+    return [self make:start end:end hasStartTime:true hasEndTime:true isSometimeEvent:false isUserCreated:false];
 }
 
-+ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent {
-    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent];
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent isUserCreated:(BOOL)isUserCreated {
+    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent isUserCreated:isUserCreated];
 }
 
-- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent {
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent isUserCreated:(BOOL)isUserCreated {
     if (self = [super init]) {
         self.reuseIdentifierPostfix = MSEventDefaultReuseIdentifierPostfix;
         self.startDate = startDate;
@@ -31,6 +31,7 @@
         self.hasStartTime = hasStartTime;
         self.hasEndTime = hasEndTime;
         self.isSometimeEvent = isSometimeEvent;
+        self.isUserCreated = isUserCreated;
     }
     return self;
 }
@@ -48,6 +49,7 @@
     newEvent.hasStartTime = self.hasStartTime;
     newEvent.hasEndTime = self.hasEndTime;
     newEvent.isSometimeEvent = self.isSometimeEvent;
+    newEvent.isUserCreated = self.isUserCreated;
     
     return newEvent;
 }
