@@ -328,6 +328,12 @@
     return event.isSometimeEvent;
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout userCreatedForItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *dateString    = [self dateStringForSection:indexPath.section];
+    MSEvent *event          = [mEventsGroupedByDay[dateString] objectAtIndex:indexPath.row];
+    return event.isUserCreated;
+}
+
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout startTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *dateString    = [self dateStringForSection:indexPath.section];

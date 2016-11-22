@@ -29,17 +29,18 @@
 #import "MSCollectionViewCalendarLayout.h"
 #import "NSDate+Easy.h"
 
-NSString * const MSCollectionElementKindTimeRowHeader               = @"MSCollectionElementKindTimeRow";
-NSString * const MSCollectionElementKindDayColumnHeader             = @"MSCollectionElementKindDayHeader";
-NSString * const MSCollectionElementKindTimeRowHeaderBackground     = @"MSCollectionElementKindTimeRowHeaderBackground";
-NSString * const MSCollectionElementKindDayColumnHeaderBackground   = @"MSCollectionElementKindDayColumnHeaderBackground";
-NSString * const MSCollectionElementKindAllDayEvent                 = @"MSCollectionElementKindAllDayEvent";
+NSString * const MSCollectionElementKindTimeRowHeader                  = @"MSCollectionElementKindTimeRow";
+NSString * const MSCollectionElementKindDayColumnHeader                = @"MSCollectionElementKindDayHeader";
+NSString * const MSCollectionElementKindTimeRowHeaderBackground        = @"MSCollectionElementKindTimeRowHeaderBackground";
+NSString * const MSCollectionElementKindDayColumnHeaderBackground      = @"MSCollectionElementKindDayColumnHeaderBackground";
+NSString * const MSCollectionElementKindAllDayEvent                    = @"MSCollectionElementKindAllDayEvent";
 NSString * const MSCollectionElementKindAllDayEventsHorizontalGridline = @"MSCollectionElementKindAllDayEventsHorizontalGridline";
-NSString * const MSCollectionElementKindSometimeEvent                 = @"MSCollectionElementKindSometimeEvent";
-NSString * const MSCollectionElementKindCurrentTimeIndicator        = @"MSCollectionElementKindCurrentTimeIndicator";
-NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline = @"MSCollectionElementKindCurrentTimeHorizontalGridline";
-NSString * const MSCollectionElementKindVerticalGridline            = @"MSCollectionElementKindVerticalGridline";
-NSString * const MSCollectionElementKindHorizontalGridline          = @"MSCollectionElementKindHorizontalGridline";
+NSString * const MSCollectionElementKindSometimeEvent                  = @"MSCollectionElementKindSometimeEvent";
+NSString * const MSCollectionElementKindUserCreatedEvent               = @"MSCollectionElementKindUserCreatedEvent";
+NSString * const MSCollectionElementKindCurrentTimeIndicator           = @"MSCollectionElementKindCurrentTimeIndicator";
+NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline  = @"MSCollectionElementKindCurrentTimeHorizontalGridline";
+NSString * const MSCollectionElementKindVerticalGridline               = @"MSCollectionElementKindVerticalGridline";
+NSString * const MSCollectionElementKindHorizontalGridline             = @"MSCollectionElementKindHorizontalGridline";
 
 NSUInteger const MSCollectionMinOverlayZ    = 1000.0; // Allows for 900 items in a section without z overlap issues
 NSUInteger const MSCollectionMinCellZ       = 100.0;  // Allows for 100 items in a section's background
@@ -88,6 +89,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
 @property (nonatomic, strong) NSCache *cachedDayDateComponents;
 @property (nonatomic, strong) NSCache *cachedAllDay;
 @property (nonatomic, strong) NSCache *cachedSometime;
+@property (nonatomic, strong) NSCache *cachedUserCreated;
 @property (nonatomic, strong) NSCache *cachedStartTimeDateComponents;
 @property (nonatomic, strong) NSCache *cachedEndTimeDateComponents;
 @property (nonatomic, strong) NSCache *cachedCurrentDateComponents;
@@ -457,7 +459,7 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
                 CGFloat itemMaxX = nearbyintf(itemMinX + (self.sectionWidth - (self.cellMargin.left + self.cellMargin.right)));
                 itemAttributes.frame = CGRectMake(itemMinX, itemMinY, (itemMaxX - itemMinX), (itemMaxY - itemMinY));
                 
-                itemAttributes.zIndex = [self zIndexForElementKind:nil];
+                itemAttributes.zIndex = [self zIndexForElementKind:([self userCreatedForIndexPath:itemIndexPath] ? MSCollectionElementKindUserCreatedEvent : nil)];
             }
             [self adjustItemsForOverlap:sectionItemAttributes inSection:section sectionMinX:sectionMinX];
         }
@@ -651,7 +653,7 @@ static CGFloat OverlapInset = 4.0;
 - (void)adjustItemsForOverlap:(NSArray *)sectionItemAttributes inSection:(NSUInteger)section sectionMinX:(CGFloat)sectionMinX
 {
     for (UICollectionViewLayoutAttributes *itemAttributes in sectionItemAttributes) {
-        itemAttributes.zIndex = MSCollectionMinCellZ;
+        CGFloat currentZDelta = itemAttributes.zIndex - MSCollectionMinCellZ;
         
         // Top right is used so that containment logic is uneffected by the insets this method applies. Minus 0.1 because CGRectContainsPoint appears to exclude far edge.
         CGPoint itemTopRight = CGPointMake(CGRectGetMaxX(itemAttributes.frame) - 0.1, CGRectGetMinY(itemAttributes.frame));
@@ -682,7 +684,7 @@ static CGFloat OverlapInset = 4.0;
             offsetFrame.size.width = self.sectionWidth - self.cellMargin.left - self.cellMargin.right - numberOfInsets * OverlapInset;
             
             itemAttributes.frame = offsetFrame;
-            itemAttributes.zIndex = MSCollectionMinCellZ + numberOfInsets; // The more item is pushed inwards, the higher it is.
+            itemAttributes.zIndex = MSCollectionMinCellZ + numberOfInsets + currentZDelta; // The more item is pushed inwards, the higher it is. Maintain current Z delta for elevated items (i.e. user created items)
         }
     }
 }
@@ -829,6 +831,7 @@ static CGFloat OverlapInset = 4.0;
     self.cachedSometime = [NSCache new];
     self.cachedStartTimeDateComponents = [NSCache new];
     self.cachedEndTimeDateComponents = [NSCache new];
+    self.cachedUserCreated = [NSCache new];
     self.cachedCurrentDateComponents = [NSCache new];
     self.cachedMaxColumnHeight = CGFLOAT_MIN;
     self.cachedMaxAllDayEventsSectionCombinedHeight = CGFLOAT_MIN;
@@ -930,6 +933,7 @@ static CGFloat OverlapInset = 4.0;
     [self.cachedDayDateComponents               removeAllObjects];
     [self.cachedAllDay                          removeAllObjects];
     [self.cachedSometime                        removeAllObjects];
+    [self.cachedUserCreated                     removeAllObjects];
     [self.cachedStartTimeDateComponents         removeAllObjects];
     [self.cachedEndTimeDateComponents           removeAllObjects];
     [self.cachedCurrentDateComponents           removeAllObjects];
@@ -1211,6 +1215,10 @@ static CGFloat OverlapInset = 4.0;
             else if (elementKind == MSCollectionElementKindSometimeEvent) {
                 return [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:floating] + 1.0;
             }
+            // User Created Event
+            else if (elementKind == MSCollectionElementKindUserCreatedEvent) {
+                return (MSCollectionMinCellZ + 100.0);
+            }
             // Cell
             else if (elementKind == nil) {
                 return MSCollectionMinCellZ;
@@ -1405,6 +1413,17 @@ static CGFloat OverlapInset = 4.0;
     return sometime;
 }
 
+- (BOOL)userCreatedForIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.cachedUserCreated objectForKey:indexPath]) {
+        return [[self.cachedUserCreated objectForKey:indexPath] boolValue];
+    }
+    
+    BOOL userCreated = [self.delegate collectionView:self.collectionView layout:self userCreatedForItemAtIndexPath:indexPath];
+    
+    [self.cachedUserCreated setObject:@(userCreated) forKey:indexPath];
+    return userCreated;
+}
 
 - (NSDateComponents *)startTimeForIndexPath:(NSIndexPath *)indexPath
 {
