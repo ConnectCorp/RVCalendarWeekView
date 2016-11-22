@@ -354,27 +354,6 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
     for (NSUInteger section = 0 ; section < [self.collectionView numberOfSections] ; section++ ) {
         CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
-        // All Day Items
-        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
-            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-            
-            if (![self allDayForIndexPath:itemIndexPath]) { continue; }
-            
-            UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
-            [allDayItemAttributes addObject:itemAttributes];
-            
-            NSDateComponents *itemStartTime = [self startTimeForIndexPath:itemIndexPath];
-            NSDateComponents *itemEndTime   = [self endTimeForIndexPath:itemIndexPath];
-            NSDateComponents *timeBetween = [NSCalendar.currentCalendar components:NSCalendarUnitDay fromDateComponents:itemStartTime toDateComponents:itemEndTime options:0];
-            
-            CGFloat itemMinY = CGRectGetMaxY(dayColumnHeaderBackgroundAttributes.frame) + self.cellMargin.top;
-            CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
-            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
-            CGFloat itemHeight = self.allDayItemHeight - (self.cellMargin.top + self.cellMargin.bottom);
-            
-            itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
-            itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEvent floating:true];
-        }
         
         // Sometime Items
         for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
@@ -405,6 +384,28 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
         UICollectionViewLayoutAttributes *dayColumnHeaderAttributes = [self layoutAttributesForSupplementaryViewAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section] ofKind:MSCollectionElementKindDayColumnHeader withItemCache:self.dayColumnHeaderAttributes];
         dayColumnHeaderAttributes.frame = CGRectMake(sectionMinX, dayColumnHeaderMinY, self.sectionWidth, self.dayColumnHeaderHeight);
         dayColumnHeaderAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:dayColumnHeaderFloating];
+        
+        // All Day Items
+        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
+            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+            
+            if (![self allDayForIndexPath:itemIndexPath]) { continue; }
+            
+            UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
+            [allDayItemAttributes addObject:itemAttributes];
+            
+            NSDateComponents *itemStartTime = [self startTimeForIndexPath:itemIndexPath];
+            NSDateComponents *itemEndTime   = [self endTimeForIndexPath:itemIndexPath];
+            NSDateComponents *timeBetween = [NSCalendar.currentCalendar components:NSCalendarUnitDay fromDateComponents:itemStartTime toDateComponents:itemEndTime options:0];
+            
+            CGFloat itemMinY = CGRectGetMaxY(dayColumnHeaderBackgroundAttributes.frame) + self.cellMargin.top;
+            CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
+            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
+            CGFloat itemHeight = self.allDayItemHeight - (self.cellMargin.top + self.cellMargin.bottom);
+            
+            itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
+            itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEvent floating:true];
+        }
         
         if (needsToPopulateVerticalGridlineAttributes) {
             // Vertical Gridline
