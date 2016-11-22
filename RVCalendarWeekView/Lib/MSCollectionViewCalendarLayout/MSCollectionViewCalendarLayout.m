@@ -352,6 +352,30 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
 @try { //HACK: this try/catch block was put in to keep the app from crashing - the root of the bug has NOT BEEN Solved  TODO: Fix this bug 
     
+    for (NSUInteger section = 0 ; section < [self.collectionView numberOfSections] ; section++ ) {
+        CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
+        
+        // Sometime Items
+        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
+            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+            
+            if (![self sometimeForIndexPath:itemIndexPath]) { continue; }
+            
+            UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
+            
+            NSDateComponents *itemStartTime = [self startTimeForIndexPath:itemIndexPath];
+            NSDateComponents *itemEndTime   = [self endTimeForIndexPath:itemIndexPath];
+            NSDateComponents *timeBetween = [NSCalendar.currentCalendar components:NSCalendarUnitDay fromDateComponents:itemStartTime toDateComponents:itemEndTime options:0];
+            
+            CGFloat itemMinY = CGRectGetMinY(dayColumnHeaderBackgroundAttributes.frame);
+            CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
+            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
+            CGFloat itemHeight = CGRectGetHeight(self.collectionView.frame);
+            itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
+            itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindSometimeEvent floating:dayColumnHeaderFloating];
+        }
+    }
+    
     [sectionIndexes enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
         
         CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
@@ -399,26 +423,6 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             
             itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
             itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindAllDayEvent floating:true];
-        }
-        
-        // Sometime Items
-        for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
-            NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-            
-            if (![self sometimeForIndexPath:itemIndexPath]) { continue; }
-            
-            UICollectionViewLayoutAttributes *itemAttributes = [self layoutAttributesForCellAtIndexPath:itemIndexPath withItemCache:self.itemAttributes];
-            
-            NSDateComponents *itemStartTime = [self startTimeForIndexPath:itemIndexPath];
-            NSDateComponents *itemEndTime   = [self endTimeForIndexPath:itemIndexPath];
-            NSDateComponents *timeBetween = [NSCalendar.currentCalendar components:NSCalendarUnitDay fromDateComponents:itemStartTime toDateComponents:itemEndTime options:0];
-            
-            CGFloat itemMinY = CGRectGetMinY(dayColumnHeaderBackgroundAttributes.frame);
-            CGFloat itemMinX = nearbyintf(sectionMinX + self.cellMargin.left);
-            CGFloat itemWidth = nearbyintf((timeBetween.day + 1) * self.sectionWidth - (self.cellMargin.left + self.cellMargin.right));
-            CGFloat itemHeight = CGRectGetHeight(self.collectionView.frame);
-            itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
-            itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindSometimeEvent floating:dayColumnHeaderFloating];
         }
         
         // Other Items
