@@ -15,15 +15,15 @@
 }
 
 + (instancetype)make:(NSDate *)start end:(NSDate *)end title:(NSString *)title location:(NSString *)location {
-    return [self make:start end:end hasStartTime:true hasEndTime:true isSometimeEvent:false title:title location:location];
+    return [self make:start end:end hasStartTime:true hasEndTime:true isSometimeEvent:false isUserCreated:false title:title location:location];
 }
 
-+ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent title:(NSString *)title location:(NSString *)location {
-    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent title:title location:location];
++ (instancetype)make:(NSDate *)start end:(NSDate *)end hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent isUserCreated:(BOOL)isUserCreated title:(NSString *)title location:(NSString *)location {
+    return [[self alloc] initWithStartDate:start endDate:end hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent isUserCreated:isUserCreated title:title location:location];
 }
 
-- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent title:(NSString*)title location:(NSString*)location {
-    if (self = [super initWithStartDate:startDate endDate:endDate hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent]) {
+- (instancetype)initWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate hasStartTime:(BOOL)hasStartTime hasEndTime:(BOOL)hasEndTime isSometimeEvent:(BOOL)isSometimeEvent isUserCreated:(BOOL)isUserCreated title:(NSString*)title location:(NSString*)location {
+    if (self = [super initWithStartDate:startDate endDate:endDate hasStartTime:hasStartTime hasEndTime:hasEndTime isSometimeEvent:isSometimeEvent isUserCreated:isUserCreated]) {
         self.title = title;
         self.location = location;
     }
