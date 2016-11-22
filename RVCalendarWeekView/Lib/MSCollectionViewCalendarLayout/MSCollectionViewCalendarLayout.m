@@ -352,33 +352,8 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
     
 @try { //HACK: this try/catch block was put in to keep the app from crashing - the root of the bug has NOT BEEN Solved  TODO: Fix this bug 
     
-    [sectionIndexes enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
-        
+    for (NSUInteger section = 0 ; section < [self.collectionView numberOfSections] ; section++ ) {
         CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
-        
-        // Day Column Header
-        UICollectionViewLayoutAttributes *dayColumnHeaderAttributes = [self layoutAttributesForSupplementaryViewAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section] ofKind:MSCollectionElementKindDayColumnHeader withItemCache:self.dayColumnHeaderAttributes];
-        dayColumnHeaderAttributes.frame = CGRectMake(sectionMinX, dayColumnHeaderMinY, self.sectionWidth, self.dayColumnHeaderHeight);
-        dayColumnHeaderAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:dayColumnHeaderFloating];
-        
-        if (needsToPopulateVerticalGridlineAttributes) {
-            // Vertical Gridline
-            NSIndexPath *verticalGridlineIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-            UICollectionViewLayoutAttributes *horizontalGridlineAttributes = [self layoutAttributesForDecorationViewAtIndexPath:verticalGridlineIndexPath ofKind:MSCollectionElementKindVerticalGridline withItemCache:self.verticalGridlineAttributes];
-            CGFloat horizontalGridlineMinX = nearbyintf(sectionMinX - self.sectionMargin.left - (self.verticalGridlineWidth / 2.0));
-            
-            //Weekends
-            int weekDay = (currentTimeDateComponents.weekday + section) % 7;
-            if(self.showWeekends && (weekDay == 0 || weekDay == 1)) {  //0 Saturday //1 sunday //2 Monday...
-                horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, calendarGridMinY, self.sectionWidth, sectionHeight);
-                horizontalGridlineAttributes.zIndex = -1;
-            }
-            else{
-                horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, calendarGridMinY, self.verticalGridlineWidth, sectionHeight);
-            }
-            
-        }
-        
         // All Day Items
         for (NSInteger item = 0; item < [self.collectionView numberOfItemsInSection:section]; item++) {
             NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
@@ -420,6 +395,36 @@ NSUInteger const MSCollectionMinBackgroundZ = 0.0;
             itemAttributes.frame = CGRectMake(itemMinX, itemMinY, itemWidth, itemHeight);
             itemAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindSometimeEvent floating:dayColumnHeaderFloating];
         }
+    }
+    
+    [sectionIndexes enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
+        
+        CGFloat sectionMinX = (calendarContentMinX + (sectionWidth * section));
+        
+        // Day Column Header
+        UICollectionViewLayoutAttributes *dayColumnHeaderAttributes = [self layoutAttributesForSupplementaryViewAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section] ofKind:MSCollectionElementKindDayColumnHeader withItemCache:self.dayColumnHeaderAttributes];
+        dayColumnHeaderAttributes.frame = CGRectMake(sectionMinX, dayColumnHeaderMinY, self.sectionWidth, self.dayColumnHeaderHeight);
+        dayColumnHeaderAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:dayColumnHeaderFloating];
+        
+        if (needsToPopulateVerticalGridlineAttributes) {
+            // Vertical Gridline
+            NSIndexPath *verticalGridlineIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
+            UICollectionViewLayoutAttributes *horizontalGridlineAttributes = [self layoutAttributesForDecorationViewAtIndexPath:verticalGridlineIndexPath ofKind:MSCollectionElementKindVerticalGridline withItemCache:self.verticalGridlineAttributes];
+            CGFloat horizontalGridlineMinX = nearbyintf(sectionMinX - self.sectionMargin.left - (self.verticalGridlineWidth / 2.0));
+            
+            //Weekends
+            int weekDay = (currentTimeDateComponents.weekday + section) % 7;
+            if(self.showWeekends && (weekDay == 0 || weekDay == 1)) {  //0 Saturday //1 sunday //2 Monday...
+                horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, calendarGridMinY, self.sectionWidth, sectionHeight);
+                horizontalGridlineAttributes.zIndex = -1;
+            }
+            else{
+                horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, calendarGridMinY, self.verticalGridlineWidth, sectionHeight);
+            }
+            
+        }
+        
+       
         
         // Other Items
         if (needsToPopulateItemAttributes) {
