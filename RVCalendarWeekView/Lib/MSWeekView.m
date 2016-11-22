@@ -267,6 +267,7 @@
     cell.event              = originalEvent;
     cell.displayedEvent     = event;
     
+    cell.userInteractionEnabled = !event.isSometimeEvent;
     return cell;
 }
 
