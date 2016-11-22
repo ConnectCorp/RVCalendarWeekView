@@ -227,7 +227,7 @@
     NSDate *firstDateToShow = self.firstDateToShow ?: [NSDate today:@"device"];
     
     for (MSEventStandard *event in events) {
-        if (event.startDate < firstDateToShow && event.endDate >= firstDateToShow) {
+        if ([event.startDate timeIntervalSinceDate:firstDateToShow] < 0 && [event.endDate timeIntervalSinceDate:firstDateToShow] >= 0) {
             MSEventStandard *alteredEvent = [event copy];
             alteredEvent.startDate = firstDateToShow;
             alteredEvent.internalIdentifier = event.internalIdentifier;
