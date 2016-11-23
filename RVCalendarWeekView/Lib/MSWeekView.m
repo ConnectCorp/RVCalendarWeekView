@@ -182,7 +182,7 @@
 -(void)groupEventsByDays{
     [self assignEventsUUIDs];
     NSArray *updatedEvents = [self splitEventsByDay: [self truncateEventsAtToday:mEvents]];
-    mEventsGroupedByDay = [updatedEvents groupBy:@"startDate.toDeviceTimezoneDateString"].mutableCopy;
+    mEventsGroupedByDay = [updatedEvents groupBy:@"startDate.toDeviceTimezoneDateString"];
 }
 
 - (void)assignEventsUUIDs {
@@ -196,12 +196,16 @@
     
     for (MSEventStandard *event in events) {
         NSDate *endOfDay = [[[[NSCalendar currentCalendar] startOfDayForDate:event.startDate] addDay] substractSecond];
-        if (event.hasStartTime == true && event.hasEndTime == true && event.endDate > endOfDay) {
+        
+        if (event.hasStartTime == true && event.hasEndTime == true &&
+            event.endDate > endOfDay && // If event is longer than a day long
+            event.endDate.timeIntervalSinceNow < 365 * 24 * 60 * 60) { // And event doesn't end more than a year in the future (which only happens with a data corruption bug)
             MSEventStandard *alteredEvent = [event copy];
             alteredEvent.endDate = endOfDay;
             alteredEvent.internalIdentifier = event.internalIdentifier;
             [splitEvents addObject:alteredEvent];
             
+            // Split the event into N events, each of which is the overlap of this event to a particular day
             NSDate *newEventStart = [endOfDay addSecond];
             while (newEventStart < event.endDate) {
                 MSEventStandard *newEvent = [event copy];
@@ -223,7 +227,6 @@
 
 - (NSArray *)truncateEventsAtToday:(NSArray *)events {
     NSMutableArray *truncatedEvents = [NSMutableArray array];
-    
     NSDate *firstDateToShow = self.firstDateToShow ?: [NSDate today:@"device"];
     
     for (MSEventStandard *event in events) {
