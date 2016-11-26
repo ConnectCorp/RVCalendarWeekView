@@ -106,7 +106,10 @@
     }
     else if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
         //NSLog(@"Pan ended: %@",eventCell.akEvent.title);
-        [self onDragEnded:eventCell endPoint: [gestureRecognizer locationInView:self.baseWeekView]];
+        CGPoint cp = [gestureRecognizer locationInView:self.baseWeekView];
+        
+        CGPoint endPoint = CGPointMake(cp.x, CGRectGetMinY(mDragableEvent.frame));
+        [self onDragEnded:eventCell endPoint:endPoint];
     }
     [self scrollCollectionView:gestureRecognizer];
 }
