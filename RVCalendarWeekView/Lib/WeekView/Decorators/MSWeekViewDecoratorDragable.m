@@ -15,6 +15,8 @@
 
 @interface MSWeekViewDecoratorDragable () <UIGestureRecognizerDelegate>
 
+@property (nonatomic) NSTimer *scrollCollectionViewTimer;
+
 @end
 
 @implementation MSWeekViewDecoratorDragable
@@ -31,7 +33,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MSEventCellStandard *cell = (MSEventCellStandard*)[super collectionView:collectionView cellForItemAtIndexPath:indexPath];
-    UIPanGestureRecognizer* gr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onEventCellPan:)];
+    UIPanGestureRecognizer *gr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onEventCellPan:)];
     gr.delegate = self;
     [cell addGestureRecognizer:gr];
     
@@ -62,6 +64,10 @@
 #pragma mark - Drag & Drop
 //=========================================================
 -(void)onEventCellPan:(UIPanGestureRecognizer*)gestureRecognizer{
+    // Cancel the scroll collection view timer when a new pan event is fired.
+    [self.scrollCollectionViewTimer invalidate];
+    self.scrollCollectionViewTimer = nil;
+    
     MSEventCell* eventCell = (MSEventCell*)gestureRecognizer.view;
     
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
@@ -100,25 +106,66 @@
     }
     else if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
         //NSLog(@"Pan ended: %@",eventCell.akEvent.title);
-        [self onDragEnded:eventCell startPoint: startPoint endPoint: [gestureRecognizer locationInView:self.baseWeekView]];
+        [self onDragEnded:eventCell endPoint: [gestureRecognizer locationInView:self.baseWeekView]];
+    }
+    [self scrollCollectionView:gestureRecognizer];
+}
+
+- (void)scrollCollectionView:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded &&
+        gestureRecognizer.state != UIGestureRecognizerStateCancelled) {
+        CGPoint cp = [gestureRecognizer locationInView:self.baseWeekView];
+        CGFloat minDistanceFromEdge = 50;
+        CGFloat distanceXFromLeftEdge = cp.x - self.weekView.weekFlowLayout.timeRowHeaderWidth;
+        CGFloat distanceXFromRightEdge = CGRectGetMaxX(self.collectionView.frame) - cp.x;
+        CGFloat distanceYFromTopEdge = cp.y - self.weekView.weekFlowLayout.dayColumnHeaderHeight;
+        CGFloat distanceYFromBottomEdge = CGRectGetMaxY(self.collectionView.frame) - cp.y;
+        
+        CGFloat delX = 0;
+        CGFloat delY = 0;
+        
+        if (distanceXFromRightEdge < minDistanceFromEdge) {
+            delX = minDistanceFromEdge - distanceXFromRightEdge;
+        } else if (distanceXFromLeftEdge < minDistanceFromEdge) {
+            delX = -(minDistanceFromEdge - distanceXFromLeftEdge);
+        }
+        
+        if (distanceYFromBottomEdge < minDistanceFromEdge) {
+            delY = minDistanceFromEdge - distanceYFromBottomEdge;
+        } else if (distanceYFromTopEdge < minDistanceFromEdge) {
+            delY = -(minDistanceFromEdge - distanceYFromTopEdge);
+        }
+        
+        
+        if (delX != 0 || delY != 0) {
+            CGRect newRect = CGRectMake(self.collectionView.contentOffset.x + delX,
+                                        self.collectionView.contentOffset.y + delY,
+                                        self.collectionView.frame.size.width,
+                                        self.collectionView.frame.size.height);
+            [self.weekView.collectionView scrollRectToVisible:newRect animated:YES];
+            self.scrollCollectionViewTimer = [NSTimer scheduledTimerWithTimeInterval:.1
+                                                                              target:self
+                                                                            selector:@selector(scrollCollectionViewWithUserInfo:)
+                                                                            userInfo:gestureRecognizer
+                                                                             repeats:NO];
+        }
     }
 }
 
-- (void)onDragEnded:(MSEventCell *)eventCell startPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint {
-    NSDate *startPointDate = [self dateForPoint:startPoint];
+- (void)scrollCollectionViewWithUserInfo:(NSTimer *)timer {
+    [self scrollCollectionView:timer.userInfo];
+}
+
+- (void)onDragEnded:(MSEventCell *)eventCell endPoint:(CGPoint)endPoint {
     NSDate *endPointDate = [self dateForPoint:endPoint];
-    int duration = [endPointDate timeIntervalSinceDate:startPointDate];
+    NSDate *newDate = endPointDate;
     
-    NSDate *newStartDate = [eventCell.event.startDate dateByAddingSeconds:duration];
-    NSDate *newEndDate = [eventCell.event.endDate dateByAddingSeconds:duration];
-    
-    if([self canMoveToNewDate:eventCell.event newDate:newStartDate]){
-        eventCell.event.startDate = newStartDate;
-        eventCell.event.endDate = newEndDate;
+    if([self canMoveToNewDate:eventCell.event newDate:newDate]){
+        eventCell.event.startDate = newDate;
         
         [self.baseWeekView forceReload:YES];
         if (self.dragDelegate) {
-            [self.dragDelegate weekView:self.baseWeekView event:eventCell.event moved:newStartDate];
+            [self.dragDelegate weekView:self.baseWeekView event:eventCell.event moved:newDate];
         }
     }
     
