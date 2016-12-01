@@ -99,7 +99,7 @@
     y = [self viewYToContentY:y];
     int hours          = (y / self.weekFlowLayout.hourHeight);
     int minute         = (y / self.weekFlowLayout.hourHeight - hours ) * 60;
-    int minuteRounded  = [self round:minute toNearest:5];
+    int minuteRounded  = [self round:minute toNearest:15];
     return MAX(0, minuteRounded == 60 ? 55 : minuteRounded);
 }
 
