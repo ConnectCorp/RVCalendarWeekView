@@ -65,6 +65,7 @@
     self.collectionView = [[UICollectionView alloc] initWithFrame:self.bounds collectionViewLayout:self.weekFlowLayout];
     self.collectionView.dataSource                      = self;
     self.collectionView.delegate                        = self;
+    self.collectionView.bounces                         = NO;
     self.collectionView.directionalLockEnabled          = YES;
     self.collectionView.showsVerticalScrollIndicator    = NO;
     self.collectionView.showsHorizontalScrollIndicator  = NO;
